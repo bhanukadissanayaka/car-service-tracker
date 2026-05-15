@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceHub - Customer Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #050505;
+            color: white;
+        }
+
+        .hero {
+            min-height: 100vh;
+            background:
+                linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.95)),
+                url("assets/car-service.png");
+            background-size: cover;
+            background-position: center top;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin-top: 300px;
+        }
+
+        .hero h1 {
+            font-size: 70px;
+            margin: 0;
+            line-height: 1;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .hero h1 span {
+            color: red;
+            display: block;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin: 25px 0;
+            color: #e5e5e5;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: red;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: black;
+        }
+
+        .services {
+            padding: 60px 20px;
+            background: #080808;
+            text-align: center;
+        }
+
+        .services h2 {
+            color: red;
+            font-size: 32px;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+        }
+
+        .service-grid {
+            max-width: 900px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .service-card {
+            border: 1px solid #222;
+            padding: 25px;
+            background: #111;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: #000;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 45px;
+            }
+
+            .hero-content {
+                margin-top: 250px;
+            }
+
+            .service-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Car <span>Service</span></h1>
+        <p>Experience top-notch service for your vehicle today with ServiceHub.</p>
+
+        <div class="buttons">
+            <a href="index.html" class="btn btn-primary">Staff Login</a>
+            <a href="#services" class="btn btn-secondary">View Services</a>
+        </div>
+    </div>
+</section>
+
+<section id="services" class="services">
+    <h2>Our Services</h2>
+
+    <div class="service-grid">
+        <div class="service-card">Engine Service</div>
+        <div class="service-card">Body Repair</div>
+        <div class="service-card">Electrical</div>
+        <div class="service-card">Transmission</div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>© 2026 ServiceHub - Car Service & Maintenance Tracker</p>
+</footer>
+
+</body>
+</html>

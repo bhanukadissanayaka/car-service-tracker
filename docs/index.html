@@ -1,0 +1,3431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceHub - Car Service Tracker</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #eef2f5;
+            --card: #ffffff;
+            --ink: #17202a;
+            --muted: #657182;
+            --line: #d9e0e7;
+            --dark: #151d26;
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --primary-soft: #d8f3ee;
+            --amber: #f59e0b;
+            --amber-soft: #fff2d6;
+            --blue: #2563eb;
+            --blue-soft: #dbeafe;
+            --red: #dc2626;
+            --red-soft: #fee2e2;
+            --shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                linear-gradient(120deg, rgba(238, 242, 245, 0.92), rgba(225, 232, 238, 0.84)),
+                url("https://images.unsplash.com/photo-1632823469850-1b7b1e8b7e1e?auto=format&fit=crop&w=1800&q=80");
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: var(--ink);
+            font-family: Inter, Arial, sans-serif;
+            letter-spacing: 0;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login-screen {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(320px, 1fr) minmax(360px, 0.95fr);
+            background: var(--dark);
+        }
+
+        .login-visual {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 48px;
+            color: white;
+            background:
+                linear-gradient(180deg, rgba(12, 17, 23, 0.12), rgba(12, 17, 23, 0.86)),
+                url("https://images.unsplash.com/photo-1632823469850-1b7b1e8b7e1e?auto=format&fit=crop&w=1800&q=80");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-copy {
+            max-width: 650px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .brand-icon,
+        .avatar,
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: var(--radius);
+            flex: 0 0 auto;
+        }
+
+        .brand-icon {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.28);
+        }
+
+        .brand-text {
+            display: grid;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .brand-text strong {
+            font-size: 20px;
+            line-height: 1.1;
+        }
+
+        .brand-text span {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+        }
+
+        .login-copy h1 {
+            margin: 34px 0 14px;
+            font-size: 44px;
+            line-height: 1.08;
+        }
+
+        .login-copy p {
+            margin: 0;
+            max-width: 560px;
+            color: rgba(255, 255, 255, 0.78);
+            line-height: 1.7;
+        }
+
+        .visual-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .visual-stat {
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+        }
+
+        .visual-stat strong {
+            display: block;
+            font-size: 22px;
+        }
+
+        .visual-stat span {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 12px;
+        }
+
+        .login-panel {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 32px;
+            background: #f8fafc;
+        }
+
+        .login-card,
+        .panel,
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+        }
+
+        .login-card {
+            width: min(100%, 460px);
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .login-card h2 {
+            margin: 22px 0 8px;
+            font-size: 26px;
+        }
+
+        .login-card p {
+            margin: 0 0 20px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .role-switch {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .role-option {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+            color: var(--ink);
+            text-align: left;
+        }
+
+        .role-option svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .role-option strong,
+        .role-option span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .role-option span {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .role-option.active {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-grid.one {
+            grid-template-columns: 1fr;
+        }
+
+        .car-builder-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .car-preview {
+            position: sticky;
+            top: 96px;
+            min-height: 560px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: var(--radius);
+            background:
+                linear-gradient(180deg, rgba(13, 19, 25, 0.22), rgba(13, 19, 25, 0.92)),
+                url("https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1400&q=80");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .car-preview::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(9, 13, 18, 0.04), rgba(9, 13, 18, 0.84)),
+                linear-gradient(90deg, rgba(9, 13, 18, 0.72), rgba(9, 13, 18, 0.06));
+            z-index: 1;
+        }
+
+        .preview-image {
+            position: absolute;
+            left: 50%;
+            top: 42%;
+            width: min(96%, 680px);
+            height: 56%;
+            object-fit: contain;
+            opacity: 0.96;
+            transform: translate(-50%, -50%) scale(1);
+            filter: drop-shadow(0 30px 44px rgba(0, 0, 0, 0.55));
+            transition: opacity 0.25s ease, transform 0.35s ease, filter 0.25s ease;
+        }
+
+        .car-preview.is-loading .preview-image {
+            opacity: 0.42;
+            filter: saturate(0.65) drop-shadow(0 30px 44px rgba(0, 0, 0, 0.45));
+            transform: translate(-50%, -50%) scale(0.96);
+        }
+
+        .preview-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            gap: 16px;
+            padding: 22px;
+        }
+
+        .preview-badge {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: 800;
+            backdrop-filter: blur(8px);
+        }
+
+        .preview-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .preview-content h3 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.05;
+        }
+
+        .preview-content p {
+            margin: 0;
+            max-width: 420px;
+            color: rgba(255, 255, 255, 0.76);
+            line-height: 1.55;
+        }
+
+        .preview-specs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .preview-specs span {
+            min-width: 0;
+            display: grid;
+            gap: 4px;
+            padding: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .preview-specs small,
+        .preview-image-state {
+            color: rgba(255, 255, 255, 0.64);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .preview-specs strong {
+            overflow: hidden;
+            color: white;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-actions .btn.secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.24);
+        }
+
+        .preview-image-state {
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        .span-2 {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #344050;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .input svg,
+        .input .icon {
+            position: absolute;
+            left: 12px;
+            width: 18px;
+            height: 18px;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            min-width: 0;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: white;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .input input,
+        .input select,
+        .input textarea {
+            padding-left: 40px;
+        }
+
+        textarea {
+            min-height: 104px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 8px;
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: var(--radius);
+            background: transparent;
+            color: var(--muted);
+        }
+
+        .password-toggle:hover {
+            background: #f1f5f9;
+            color: var(--ink);
+        }
+
+        .actions,
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .actions {
+            margin-top: 18px;
+        }
+
+        .btn,
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius);
+            font-weight: 700;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .btn {
+            min-height: 42px;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #202832;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn:hover,
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
+        }
+
+        .btn.primary {
+            background: var(--primary);
+        }
+
+        .btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn.secondary {
+            background: #f8fafc;
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            background: white;
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+
+        .app {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr);
+            background:
+                linear-gradient(120deg, rgba(238, 242, 245, 0.9), rgba(248, 250, 252, 0.78)),
+                url("https://images.unsplash.com/photo-1632823469850-1b7b1e8b7e1e?auto=format&fit=crop&w=1800&q=80");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            background: var(--dark);
+            color: white;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px;
+            border-radius: var(--radius);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.78);
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .nav button:hover,
+        .nav button.active {
+            background: rgba(255, 255, 255, 0.11);
+            color: white;
+        }
+
+        .nav button.active {
+            box-shadow: inset 3px 0 0 var(--amber);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            display: grid;
+            gap: 12px;
+        }
+
+        .session {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.08);
+            min-width: 0;
+        }
+
+        .avatar {
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+        }
+
+        .session span {
+            display: block;
+            min-width: 0;
+        }
+
+        .session strong,
+        .session small {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .session small {
+            color: rgba(255, 255, 255, 0.62);
+            margin-top: 3px;
+        }
+
+        .main {
+            min-width: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            min-height: 74px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 28px;
+            background: rgba(238, 242, 245, 0.86);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .topbar h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 11px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: white;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--amber);
+        }
+
+        .status.online .dot {
+            background: var(--primary);
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: grid;
+            gap: 20px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .page-title p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .panel {
+            padding: 20px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .panel-head h3 {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .panel-head h3 svg {
+            color: var(--primary);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+        }
+
+        .stat-card {
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .stat-icon {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: var(--amber-soft);
+            color: #9a5b00;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: var(--red-soft);
+            color: var(--red);
+        }
+
+        .stat-card:nth-child(5) .stat-icon {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .stat-card:nth-child(6) .stat-icon {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 30px;
+            line-height: 1.12;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+            gap: 20px;
+        }
+
+        .chart {
+            display: grid;
+            gap: 14px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr) 44px;
+            align-items: center;
+            gap: 12px;
+            color: #344050;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .bar {
+            height: 11px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            border-radius: var(--radius);
+            background: var(--primary);
+            transition: width 0.35s ease;
+        }
+
+        .quick-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .employee-card {
+            min-width: 0;
+            display: grid;
+            gap: 14px;
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #ffffff;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .employee-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .employee-avatar {
+            width: 46px;
+            height: 46px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: var(--radius);
+            background: var(--primary);
+            color: white;
+            font-weight: 900;
+            flex: 0 0 auto;
+        }
+
+        .employee-name {
+            min-width: 0;
+        }
+
+        .employee-name strong,
+        .employee-name span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .employee-name span {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .employee-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #223142;
+            font-weight: 800;
+        }
+
+        .employee-role svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
+        .employee-details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .employee-details span {
+            min-width: 0;
+            display: grid;
+            gap: 4px;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+        }
+
+        .employee-details small {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .employee-details strong {
+            overflow: hidden;
+            color: var(--ink);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .employee-details .wide {
+            grid-column: 1 / -1;
+        }
+
+        .employee-details .wide strong {
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        .work-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .work-actions .btn {
+            min-height: 36px;
+            padding: 8px 10px;
+        }
+
+        .quick-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+            min-width: 0;
+        }
+
+        .quick-item strong,
+        .quick-item span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .quick-item span {
+            color: var(--muted);
+            margin-top: 4px;
+            font-size: 13px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: var(--radius);
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .chip.info {
+            background: var(--blue-soft);
+            color: #1d4ed8;
+        }
+
+        .chip.warn {
+            background: var(--amber-soft);
+            color: #8a5200;
+        }
+
+        .chip.danger {
+            background: var(--red-soft);
+            color: var(--red);
+        }
+
+        .chip.muted {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .toolbar {
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .toolbar .input {
+            width: min(100%, 360px);
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+        }
+
+        table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th,
+        td {
+            padding: 13px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+            vertical-align: middle;
+        }
+
+        th {
+            background: #202832;
+            color: white;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        td {
+            color: #2e3a47;
+            font-size: 14px;
+        }
+
+        .empty {
+            display: grid;
+            justify-items: center;
+            gap: 8px;
+            padding: 30px 16px;
+            border: 1px dashed var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty strong {
+            color: var(--ink);
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 100;
+            min-width: 260px;
+            max-width: min(420px, calc(100vw - 32px));
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border-radius: var(--radius);
+            background: #15202b;
+            color: white;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.26);
+            transform: translateY(24px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            color: var(--amber);
+            flex: 0 0 auto;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 1080px) {
+            .stats,
+            .dashboard-grid,
+            .car-builder-grid,
+            .employee-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 860px) {
+            .login-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .login-visual {
+                min-height: 360px;
+                padding: 28px;
+            }
+
+            .login-panel {
+                min-height: auto;
+            }
+
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                inset: 0 auto 0 0;
+                width: min(82vw, 300px);
+                z-index: 50;
+                transform: translateX(-102%);
+                transition: transform 0.22s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .mobile-menu {
+                display: inline-flex;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .topbar {
+                padding: 14px 18px;
+            }
+
+            .car-builder-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .car-preview {
+                position: relative;
+                top: auto;
+                min-height: 440px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .login-copy h1 {
+                font-size: 34px;
+            }
+
+            .visual-stats,
+            .role-switch,
+            .stats,
+            .dashboard-grid,
+            .car-builder-grid,
+            .employee-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title,
+            .panel-head,
+            .toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .topbar p,
+            .status {
+                display: none;
+            }
+
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .car-preview {
+                min-height: 380px;
+            }
+
+            .preview-content h3 {
+                font-size: 25px;
+            }
+
+            .preview-specs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section id="loginScreen" class="login-screen">
+        <div class="login-visual">
+            <div class="login-copy">
+                <div class="brand">
+                    <span class="brand-icon"><i data-lucide="car-front"></i></span>
+                    <span class="brand-text">
+                        <strong>ServiceHub</strong>
+                        <span>Vehicle care console</span>
+                    </span>
+                </div>
+                <h1>Car service records with a cleaner, faster workshop dashboard.</h1>
+                <p>Track owners, vehicles, service cost, mileage, status, and next service dates from one interactive screen.</p>
+                <div class="visual-stats">
+                    <div class="visual-stat"><strong>Live</strong><span>Car records</span></div>
+                    <div class="visual-stat"><strong>Fast</strong><span>History lookup</span></div>
+                    <div class="visual-stat"><strong>Smart</strong><span>Service queue</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-panel">
+            <form id="loginForm" class="login-card">
+                <div class="brand">
+                    <span class="brand-icon"><i data-lucide="shield-check"></i></span>
+                    <span class="brand-text">
+                        <strong style="color: var(--ink);">Account Login</strong>
+                        <span style="color: var(--muted);">Choose your portal</span>
+                    </span>
+                </div>
+                <h2>Welcome back</h2>
+                <p>Select whether you are a customer or employee, then login to open the correct workspace.</p>
+
+                <div class="role-switch" aria-label="Choose login type">
+                    <button class="role-option active" type="button" data-role="customer">
+                        <i data-lucide="user-round"></i>
+                        <span><strong>Customer</strong><span>Service, cars, ratings</span></span>
+                    </button>
+                    <button class="role-option" type="button" data-role="employee">
+                        <i data-lucide="id-card"></i>
+                        <span><strong>Employee</strong><span>Staff profile, work details</span></span>
+                    </button>
+                </div>
+
+                <div class="form-grid one">
+                    <div class="field">
+                        <label for="loginEmail">Email</label>
+                        <div class="input">
+                            <i class="icon" data-lucide="mail"></i>
+                            <input id="loginEmail" type="email" placeholder="staff@garage.com" autocomplete="email" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="loginPassword">Password</label>
+                        <div class="input">
+                            <i class="icon" data-lucide="lock-keyhole"></i>
+                            <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required>
+                            <button id="passwordToggle" class="password-toggle" type="button" title="Show password">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn primary" type="submit"><i data-lucide="log-in"></i>Login</button>
+                    <button id="demoLogin" class="btn secondary" type="button"><i data-lucide="sparkles"></i>Demo account</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <div id="appShell" class="app hidden">
+        <aside id="sidebar" class="sidebar">
+            <div class="brand">
+                <span class="brand-icon"><i data-lucide="car-front"></i></span>
+                <span class="brand-text">
+                    <strong>ServiceDesk</strong>
+                    <span>Maintenance tracker</span>
+                </span>
+            </div>
+
+            <nav class="nav">
+                <button class="nav-link active" type="button" data-page="dashboardPage" data-access="customer employee"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+                <button class="nav-link" type="button" data-page="addCarPage" data-access="customer"><i data-lucide="circle-plus"></i>Add Car</button>
+                <button class="nav-link" type="button" data-page="carsPage" data-access="customer"><i data-lucide="car"></i>Cars List</button>
+                <button class="nav-link" type="button" data-page="staffPage" data-access="customer"><i data-lucide="users-round"></i>Staff Availability</button>
+                <button class="nav-link" type="button" data-page="employeePage" data-access="employee"><i data-lucide="users-round"></i>Employee Portal</button>
+                <button class="nav-link" type="button" data-page="ratingsPage" data-access="customer"><i data-lucide="star"></i>Ratings</button>
+                <button class="nav-link" type="button" data-page="servicePage" data-access="customer"><i data-lucide="wrench"></i>Add Service</button>
+                <button class="nav-link" type="button" data-page="historyPage" data-access="customer"><i data-lucide="history"></i>Service History</button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="session">
+                    <span id="avatar" class="avatar">S</span>
+                    <span>
+                        <strong id="sessionName">Staff</strong>
+                        <small id="sessionEmail">staff@garage.com</small>
+                    </span>
+                </div>
+                <button id="logoutBtn" class="btn secondary" type="button"><i data-lucide="log-out"></i>Logout</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <button id="menuBtn" class="icon-btn mobile-menu" type="button" title="Open menu"><i data-lucide="menu"></i></button>
+                <div>
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Garage activity, service cost, and upcoming work.</p>
+                </div>
+                <div class="top-actions">
+                    <span id="apiStatus" class="status"><span class="dot"></span><span id="apiStatusText">Local demo mode</span></span>
+                    <button id="refreshAll" class="icon-btn" type="button" title="Refresh data"><i data-lucide="refresh-cw"></i></button>
+                </div>
+            </header>
+
+            <div class="content">
+                <section id="dashboardPage" class="page active">
+                    <div class="page-title">
+                        <div>
+                            <h2>Workshop Overview</h2>
+                            <p>Monitor the most important service activity at a glance.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="car"></i></span>
+                            <div><span>Total cars</span><strong id="statCars">0</strong></div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="clipboard-list"></i></span>
+                            <div><span>Service records</span><strong id="statServices">0</strong></div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="wallet"></i></span>
+                            <div><span>Total revenue</span><strong id="statRevenue">0</strong></div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="bell"></i></span>
+                            <div><span>Upcoming</span><strong id="statUpcoming">0</strong></div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="users-round"></i></span>
+                            <div><span>Available staff</span><strong id="statEmployees">0</strong></div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="star"></i></span>
+                            <div><span>Avg rating</span><strong id="statRating">0.0</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="panel">
+                            <div class="panel-head"><h3><i data-lucide="activity"></i>Service Workload</h3></div>
+                            <div id="serviceChart" class="chart"></div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-head"><h3><i data-lucide="calendar-clock"></i>Next Service Queue</h3></div>
+                            <div id="upcomingList" class="quick-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head"><h3><i data-lucide="star"></i>Recent Customer Ratings</h3></div>
+                        <div id="recentRatings" class="quick-list"></div>
+                    </div>
+                </section>
+
+                <section id="addCarPage" class="page">
+                    <div class="page-title">
+                        <div><h2>Add Car</h2><p>Create a vehicle profile with owner contact and current mileage.</p></div>
+                    </div>
+                    <div class="car-builder-grid">
+                        <div class="panel">
+                            <div class="panel-head"><h3><i data-lucide="badge-plus"></i>Vehicle Details</h3></div>
+                            <form id="carForm" class="form-grid">
+                                <div class="field">
+                                    <label for="plateNumber">Plate Number</label>
+                                    <div class="input"><i class="icon" data-lucide="badge"></i><input id="plateNumber" type="text" placeholder="ABC-1234" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="ownerName">Owner Name</label>
+                                    <div class="input"><i class="icon" data-lucide="user"></i><input id="ownerName" type="text" placeholder="Owner name" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="ownerContact">Owner Contact</label>
+                                    <div class="input"><i class="icon" data-lucide="phone"></i><input id="ownerContact" type="text" placeholder="Phone number" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="brand">Brand</label>
+                                    <div class="input"><i class="icon" data-lucide="factory"></i><input id="brand" type="text" placeholder="Toyota" list="brandOptions" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="model">Model</label>
+                                    <div class="input"><i class="icon" data-lucide="car-front"></i><input id="model" type="text" placeholder="Corolla" list="modelOptions" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="year">Year</label>
+                                    <div class="input"><i class="icon" data-lucide="calendar"></i><input id="year" type="number" placeholder="2022" min="1950" max="2035" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="mileage">Mileage</label>
+                                    <div class="input"><i class="icon" data-lucide="gauge"></i><input id="mileage" type="number" placeholder="45000" min="0" required></div>
+                                </div>
+                                <div class="field">
+                                    <label for="quickNote">Internal Note</label>
+                                    <div class="input"><i class="icon" data-lucide="sticky-note"></i><input id="quickNote" type="text" placeholder="Optional note"></div>
+                                </div>
+                                <div class="actions span-2">
+                                    <button class="btn primary" type="submit"><i data-lucide="save"></i>Add Car</button>
+                                    <button class="btn secondary" type="reset"><i data-lucide="rotate-ccw"></i>Clear</button>
+                                </div>
+                            </form>
+                            <datalist id="brandOptions"></datalist>
+                            <datalist id="modelOptions"></datalist>
+                        </div>
+
+                        <aside id="carPreview" class="car-preview">
+                            <img id="carPreviewImage" class="preview-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 420'%3E%3Cpath fill='%23ffffff' fill-opacity='0.18' d='M180 255l54-84c18-28 48-45 81-45h246c34 0 65 18 83 47l50 82h32c30 0 54 24 54 54v24H122v-24c0-30 24-54 54-54h4z'/%3E%3Cpath fill='none' stroke='%23ffffff' stroke-opacity='0.65' stroke-width='22' stroke-linecap='round' stroke-linejoin='round' d='M208 255l55-86c13-20 35-32 59-32h231c25 0 48 13 61 34l51 84M182 333h586M261 333a49 49 0 1098 0 49 49 0 00-98 0zm282 0a49 49 0 1098 0 49 49 0 00-98 0z'/%3E%3C/svg%3E" alt="Car preview">
+                            <div class="preview-content">
+                                <span class="preview-badge"><i data-lucide="scan-search"></i>Local image preview</span>
+                                <div>
+                                    <h3 id="previewTitle">Enter brand and model</h3>
+                                    <p id="previewText">Choose an image folder or add files under car-images, then type a make and model.</p>
+                                </div>
+                                <div class="preview-specs">
+                                    <span><small>Brand</small><strong id="previewBrand">Not selected</strong></span>
+                                    <span><small>Model</small><strong id="previewModel">Not selected</strong></span>
+                                    <span><small>Year</small><strong id="previewYear">-</strong></span>
+                                    <span><small>Mileage</small><strong id="previewMileage">0</strong></span>
+                                </div>
+                                <div class="preview-actions">
+                                    <a id="mappedPreviewLink" class="btn secondary hidden" href="#" target="_blank" rel="noopener"><i data-lucide="image"></i>Open image</a>
+                                    <span id="previewImageState" class="preview-image-state">Ready</span>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </section>
+
+                <section id="carsPage" class="page">
+                    <div class="page-title">
+                        <div><h2>Cars List</h2><p>Search and review registered customer vehicles.</p></div>
+                    </div>
+                    <div class="panel">
+                        <div class="toolbar">
+                            <div class="input"><i class="icon" data-lucide="search"></i><input id="carSearch" type="search" placeholder="Search by plate, owner, brand, or model"></div>
+                            <button id="refreshCars" class="btn secondary" type="button"><i data-lucide="refresh-cw"></i>Refresh Cars</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Plate</th>
+                                        <th>Owner</th>
+                                        <th>Contact</th>
+                                        <th>Brand</th>
+                                        <th>Model</th>
+                                        <th>Year</th>
+                                        <th>Mileage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="staffPage" class="page">
+                    <div class="page-title">
+                        <div><h2>Staff Availability</h2><p>Customers can choose workers by availability, service type, payable amount, and car brand specialty.</p></div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="toolbar">
+                            <div class="input"><i class="icon" data-lucide="search"></i><input id="employeeSearch" type="search" placeholder="Search employee, role, service, brand, price, or availability"></div>
+                            <button class="btn secondary" type="button" id="showAvailableEmployees"><i data-lucide="badge-check"></i>Available Only</button>
+                        </div>
+                        <div id="employeeCards" class="employee-grid"></div>
+                    </div>
+                </section>
+
+                <section id="employeePage" class="page">
+                    <div class="page-title">
+                        <div><h2>Employee Portal</h2><p>New employees can add work details, skills, availability, service types, and payable amount.</p></div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head"><h3><i data-lucide="user-plus"></i>Add Employee Details</h3></div>
+                        <form id="employeeForm" class="form-grid">
+                            <div class="field">
+                                <label for="employeeCode">Employee ID</label>
+                                <div class="input"><i class="icon" data-lucide="id-card"></i><input id="employeeCode" type="text" placeholder="EMP-001" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeName">Employee Name</label>
+                                <div class="input"><i class="icon" data-lucide="user"></i><input id="employeeName" type="text" placeholder="Employee name" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeContact">Contact Number</label>
+                                <div class="input"><i class="icon" data-lucide="phone"></i><input id="employeeContact" type="text" placeholder="Phone number" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeRole">Job Role</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="briefcase-business"></i>
+                                    <select id="employeeRole" required>
+                                        <option>Mechanic</option>
+                                        <option>Service Advisor</option>
+                                        <option>Manager</option>
+                                        <option>Electrician</option>
+                                        <option>Cleaner</option>
+                                        <option>Cashier</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeSalary">Salary</label>
+                                <div class="input"><i class="icon" data-lucide="wallet"></i><input id="employeeSalary" type="number" placeholder="85000" min="0" step="0.01" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeExperience">Experience</label>
+                                <div class="input"><i class="icon" data-lucide="medal"></i><input id="employeeExperience" type="text" placeholder="5 years" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeAvailability">Availability</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="calendar-check"></i>
+                                    <select id="employeeAvailability" required>
+                                        <option>Available</option>
+                                        <option>Busy</option>
+                                        <option>On Leave</option>
+                                        <option>Off Duty</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeServiceType">Available Service Type</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="settings"></i>
+                                    <select id="employeeServiceType" required>
+                                        <option>General Service</option>
+                                        <option>Oil Change</option>
+                                        <option>Full Service</option>
+                                        <option>Brake Repair</option>
+                                        <option>Engine Repair</option>
+                                        <option>Electrical Repair</option>
+                                        <option>Tire Change</option>
+                                        <option>Battery Replacement</option>
+                                        <option>Car Wash</option>
+                                        <option>Billing</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="employeePayableAmount">Payable Amount</label>
+                                <div class="input"><i class="icon" data-lucide="badge-dollar-sign"></i><input id="employeePayableAmount" type="number" placeholder="2500" min="0" step="0.01" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeCarBrand">Car Brand Specialty</label>
+                                <div class="input"><i class="icon" data-lucide="car-front"></i><input id="employeeCarBrand" type="text" placeholder="Toyota, Honda, Lamborghini" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeShift">Work Shift</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="clock"></i>
+                                    <select id="employeeShift" required>
+                                        <option>Morning</option>
+                                        <option>Evening</option>
+                                        <option>Full Day</option>
+                                        <option>Night</option>
+                                        <option>Weekend</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="actions span-2">
+                                <button class="btn primary" type="submit"><i data-lucide="save"></i>Add Employee</button>
+                                <button class="btn secondary" type="reset"><i data-lucide="rotate-ccw"></i>Clear</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3><i data-lucide="clipboard-list"></i>Live Work Queue</h3>
+                        </div>
+                        <div id="employeeWorkList" class="employee-grid"></div>
+                    </div>
+                </section>
+
+                <section id="ratingsPage" class="page">
+                    <div class="page-title">
+                        <div><h2>Customer Ratings</h2><p>Collect feedback about employee service and quality of work.</p></div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head"><h3><i data-lucide="message-square-plus"></i>Add Customer Rating</h3></div>
+                        <form id="ratingForm" class="form-grid">
+                            <div class="field">
+                                <label for="ratingCustomerName">Customer Name</label>
+                                <div class="input"><i class="icon" data-lucide="user"></i><input id="ratingCustomerName" type="text" placeholder="Customer name" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="ratingEmployee">Employee</label>
+                                <div class="input"><i class="icon" data-lucide="users-round"></i><select id="ratingEmployee" required></select></div>
+                            </div>
+                            <div class="field">
+                                <label for="employeeRating">Employee Rating</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="star"></i>
+                                    <select id="employeeRating" required>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Poor</option>
+                                        <option value="1">1 - Very Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="qualityRating">Work Quality Rating</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="badge-check"></i>
+                                    <select id="qualityRating" required>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Poor</option>
+                                        <option value="1">1 - Very Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="ratingDate">Rating Date</label>
+                                <div class="input"><i class="icon" data-lucide="calendar"></i><input id="ratingDate" type="date" required></div>
+                            </div>
+                            <div class="field span-2">
+                                <label for="ratingComment">Customer Feedback</label>
+                                <div class="input"><i class="icon" data-lucide="message-square-text"></i><textarea id="ratingComment" placeholder="Write customer feedback about employee and service quality" required></textarea></div>
+                            </div>
+                            <div class="actions span-2">
+                                <button class="btn primary" type="submit"><i data-lucide="save"></i>Add Rating</button>
+                                <button class="btn secondary" type="reset"><i data-lucide="rotate-ccw"></i>Clear</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="toolbar">
+                            <div class="input"><i class="icon" data-lucide="search"></i><input id="ratingSearch" type="search" placeholder="Search customer, employee, rating, or feedback"></div>
+                            <select id="ratingFilter" title="Filter by score">
+                                <option value="all">All Ratings</option>
+                                <option value="5">5 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="2">2 Stars</option>
+                                <option value="1">1 Star</option>
+                            </select>
+                        </div>
+                        <div id="ratingCards" class="employee-grid"></div>
+                    </div>
+                </section>
+
+                <section id="servicePage" class="page">
+                    <div class="page-title">
+                        <div><h2>Add Service Record</h2><p>Capture service details, mileage, cost, status, and next appointment date.</p></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head"><h3><i data-lucide="wrench"></i>Service Details</h3></div>
+                        <form id="serviceForm" class="form-grid">
+                            <div class="field">
+                                <label for="carSelect">Vehicle</label>
+                                <div class="input"><i class="icon" data-lucide="car"></i><select id="carSelect" required></select></div>
+                            </div>
+                            <div class="field">
+                                <label for="serviceDate">Service Date</label>
+                                <div class="input"><i class="icon" data-lucide="calendar-check"></i><input id="serviceDate" type="date" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="serviceType">Service Type</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="settings"></i>
+                                    <select id="serviceType">
+                                        <option>Oil Change</option>
+                                        <option>Full Service</option>
+                                        <option>Brake Repair</option>
+                                        <option>Engine Repair</option>
+                                        <option>Tire Change</option>
+                                        <option>Battery Replacement</option>
+                                        <option>Inspection</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="status">Status</label>
+                                <div class="input">
+                                    <i class="icon" data-lucide="check-circle-2"></i>
+                                    <select id="status">
+                                        <option>Scheduled</option>
+                                        <option>In Progress</option>
+                                        <option>Waiting Parts</option>
+                                        <option>Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="cost">Cost</label>
+                                <div class="input"><i class="icon" data-lucide="banknote"></i><input id="cost" type="number" placeholder="15000" min="0" step="0.01" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="mileageAtService">Mileage at Service</label>
+                                <div class="input"><i class="icon" data-lucide="route"></i><input id="mileageAtService" type="number" placeholder="46000" min="0" required></div>
+                            </div>
+                            <div class="field">
+                                <label for="nextServiceDate">Next Service Date</label>
+                                <div class="input"><i class="icon" data-lucide="calendar-clock"></i><input id="nextServiceDate" type="date"></div>
+                            </div>
+                            <div class="field span-2">
+                                <label for="description">Problem / Description</label>
+                                <div class="input"><i class="icon" data-lucide="file-text"></i><textarea id="description" placeholder="Customer problem, repair notes, inspection findings"></textarea></div>
+                            </div>
+                            <div class="actions span-2">
+                                <button class="btn primary" type="submit"><i data-lucide="save"></i>Add Service</button>
+                                <button class="btn secondary" type="reset"><i data-lucide="rotate-ccw"></i>Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="historyPage" class="page">
+                    <div class="page-title">
+                        <div><h2>Service History</h2><p>Open any vehicle record and review its service timeline.</p></div>
+                    </div>
+                    <div class="panel">
+                        <div class="toolbar">
+                            <div class="input"><i class="icon" data-lucide="car"></i><select id="historyCarSelect"></select></div>
+                            <select id="historyStatusFilter" title="Filter by status">
+                                <option value="all">All Statuses</option>
+                                <option value="Completed">Completed</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Waiting Parts">Waiting Parts</option>
+                            </select>
+                            <button id="viewHistory" class="btn primary" type="button"><i data-lucide="history"></i>View History</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Cost</th>
+                                        <th>Mileage</th>
+                                        <th>Next Service</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="serviceTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <i data-lucide="bell"></i>
+        <span id="toastMessage">Saved</span>
+    </div>
+
+    <script>
+        const API = "http://localhost:8080/api";
+        const STORAGE = {
+            cars: "serviceTrackerCars",
+            services: "serviceTrackerServices",
+            employees: "serviceTrackerEmployees",
+            ratings: "serviceTrackerRatings",
+            session: "serviceTrackerSession"
+        };
+        const LOCAL_IMAGE_FOLDER = "car-images";
+        const LOCAL_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif"];
+        const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 420'%3E%3Cpath fill='%23ffffff' fill-opacity='0.18' d='M180 255l54-84c18-28 48-45 81-45h246c34 0 65 18 83 47l50 82h32c30 0 54 24 54 54v24H122v-24c0-30 24-54 54-54h4z'/%3E%3Cpath fill='none' stroke='%23ffffff' stroke-opacity='0.65' stroke-width='22' stroke-linecap='round' stroke-linejoin='round' d='M208 255l55-86c13-20 35-32 59-32h231c25 0 48 13 61 34l51 84M182 333h586M261 333a49 49 0 1098 0 49 49 0 00-98 0zm282 0a49 49 0 1098 0 49 49 0 00-98 0z'/%3E%3C/svg%3E";
+        const LOCAL_CAR_IMAGE_MAP = {
+            toyota: {
+                corolla: "car-images/toyota-corolla.jpg",
+                camry: "car-images/toyota-camry.jpg",
+                rav4: "car-images/toyota-rav4.jpg",
+                prius: "car-images/toyota-prius.jpg"
+            },
+            honda: {
+                civic: "car-images/honda-civic.jpg",
+                accord: "car-images/honda-accord.jpg",
+                "cr-v": "car-images/honda-cr-v.jpg",
+                vezel: "car-images/honda-vezel.jpg"
+            },
+            nissan: {
+                leaf: "car-images/nissan-leaf.jpg",
+                patrol: "car-images/nissan-patrol.jpg",
+                "x-trail": "car-images/nissan-x-trail.jpg"
+            },
+            bmw: {
+                "3-series": "car-images/bmw-3-series.jpg",
+                "5-series": "car-images/bmw-5-series.jpg",
+                x3: "car-images/bmw-x3.jpg",
+                x5: "car-images/bmw-x5.jpg"
+            },
+            "mercedes-benz": {
+                "c-class": "car-images/mercedes-benz-c-class.jpg",
+                "e-class": "car-images/mercedes-benz-e-class.jpg"
+            },
+            mercedes: {
+                "c-class": "car-images/mercedes-benz-c-class.jpg",
+                "e-class": "car-images/mercedes-benz-e-class.jpg"
+            },
+            audi: {
+                a3: "car-images/audi-a3.jpg",
+                a4: "car-images/audi-a4.jpg",
+                q5: "car-images/audi-q5.jpg"
+            },
+            ford: {
+                mustang: "car-images/ford-mustang.jpg",
+                ranger: "car-images/ford-ranger.jpg"
+            },
+            hyundai: {
+                elantra: "car-images/hyundai-elantra.jpg",
+                tucson: "car-images/hyundai-tucson.jpg",
+                "santa-fe": "car-images/hyundai-santa-fe.jpg"
+            },
+            kia: {
+                sportage: "car-images/kia-sportage.jpg",
+                sorento: "car-images/kia-sorento.jpg",
+                picanto: "car-images/kia-picanto.jpg"
+            },
+            mazda: {
+                "3": "car-images/mazda-3.jpg",
+                "6": "car-images/mazda-6.jpg",
+                "cx-5": "car-images/mazda-cx-5.jpg"
+            },
+            tesla: {
+                "model-3": "car-images/tesla-model-3.jpg",
+                "model-s": "car-images/tesla-model-s.jpg",
+                "model-y": "car-images/tesla-model-y.jpg"
+            },
+            lamborghini: {
+                huracan: "car-images/Lamborghini Huracan.webp",
+                "huracan-tecnica": "car-images/Lamborghini Huracan.webp",
+                aventador: "car-images/lamborghini-aventador.jpg",
+                urus: "car-images/lamborghini-urus.jpg"
+            }
+        };
+        const OFFICIAL_CAR_PREVIEWS = {
+            toyota: {
+                corolla: {
+                    name: "Toyota Corolla",
+                    site: "https://www.toyota.com/corolla/",
+                    image: "https://toyota-cms-media.s3.amazonaws.com/wp-content/uploads/2025/07/2026_Corolla_XSE_WindChillPearl_001-scaled.jpg",
+                    source: "Toyota official site"
+                },
+                camry: {
+                    name: "Toyota Camry",
+                    site: "https://www.toyota.com/camry/",
+                    image: "",
+                    source: "Toyota official site"
+                },
+                rav4: {
+                    name: "Toyota RAV4",
+                    site: "https://www.toyota.com/rav4/",
+                    image: "",
+                    source: "Toyota official site"
+                },
+                prius: {
+                    name: "Toyota Prius",
+                    site: "https://www.toyota.com/prius/",
+                    image: "",
+                    source: "Toyota official site"
+                }
+            },
+            honda: {
+                civic: {
+                    name: "Honda Civic Sedan",
+                    site: "https://automobiles.honda.com/civic-sedan",
+                    image: "https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/2026/civic-sedan/Mini-Gallery/Exterior/2026_Civic_Sedan_Gallery_Exterior_01.jpg?sc_lang=en",
+                    source: "Honda official site"
+                },
+                accord: {
+                    name: "Honda Accord",
+                    site: "https://automobiles.honda.com/accord-sedan",
+                    image: "https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/2026/accord-sedan/Hero/MY26_Accord_VLP-Hero_S.jpg?sc_lang=en",
+                    source: "Honda official site"
+                },
+                "cr-v": {
+                    name: "Honda CR-V",
+                    site: "https://automobiles.honda.com/cr-v",
+                    image: "https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/2026/CR-V/nonVLP/Global-Nav/MY26_CR-V_Petrol_BAP_Jelly.png?hash=B900E81331740B1D78CB9C728B57481A&sc_lang=en",
+                    source: "Honda official site"
+                },
+                vezel: {
+                    name: "Honda Vezel",
+                    site: "https://www.honda.co.jp/VEZEL/",
+                    image: "",
+                    source: "Honda Japan official site"
+                }
+            },
+            nissan: {
+                leaf: {
+                    name: "Nissan LEAF",
+                    site: "https://www.nissanusa.com/vehicles/electric-cars/leaf.html",
+                    image: "",
+                    source: "Nissan official site"
+                },
+                patrol: {
+                    name: "Nissan Patrol",
+                    site: "https://www.nissan-me.com/vehicles/new/patrol.html",
+                    image: "",
+                    source: "Nissan official site"
+                }
+            },
+            bmw: {
+                "3-series": {
+                    name: "BMW 3 Series Sedan",
+                    site: "https://www.bmwusa.com/vehicles/3-series.html",
+                    image: "",
+                    source: "BMW official site"
+                },
+                x3: {
+                    name: "BMW X3",
+                    site: "https://www.bmwusa.com/vehicles/x-models/x3/sports-activity-vehicle/overview.html",
+                    image: "",
+                    source: "BMW official site"
+                },
+                x5: {
+                    name: "BMW X5",
+                    site: "https://www.bmwusa.com/vehicles/x-models/x5/sports-activity-vehicle/overview.html",
+                    image: "",
+                    source: "BMW official site"
+                }
+            },
+            "mercedes-benz": {
+                "c-class": {
+                    name: "Mercedes-Benz C-Class Sedan",
+                    site: "https://www.mbusa.com/en/vehicles/class/c-class/sedan",
+                    image: "",
+                    source: "Mercedes-Benz official site"
+                },
+                "e-class": {
+                    name: "Mercedes-Benz E-Class Sedan",
+                    site: "https://www.mbusa.com/en/vehicles/class/e-class/sedan",
+                    image: "",
+                    source: "Mercedes-Benz official site"
+                }
+            },
+            mercedes: {
+                "c-class": {
+                    name: "Mercedes-Benz C-Class Sedan",
+                    site: "https://www.mbusa.com/en/vehicles/class/c-class/sedan",
+                    image: "",
+                    source: "Mercedes-Benz official site"
+                },
+                "e-class": {
+                    name: "Mercedes-Benz E-Class Sedan",
+                    site: "https://www.mbusa.com/en/vehicles/class/e-class/sedan",
+                    image: "",
+                    source: "Mercedes-Benz official site"
+                }
+            }
+        };
+        const EXACT_MODEL_ALIASES = {
+            toyota: {
+                "corolla": "corolla",
+                "camry": "camry",
+                "prius": "prius",
+                "rav4": "rav4",
+                "land cruiser": "land-cruiser",
+                "hilux": "hilux",
+                "yaris": "yaris"
+            },
+            honda: {
+                "civic": "civic",
+                "civic sedan": "civic",
+                "civic-sedan": "civic",
+                "accord": "accord",
+                "accord sedan": "accord",
+                "accord-sedan": "accord",
+                "cr-v": "cr-v",
+                "crv": "cr-v",
+                "vezel": "vezel",
+                "fit": "fit",
+                "jazz": "jazz"
+            },
+            nissan: {
+                "leaf": "leaf",
+                "altima": "altima",
+                "sentra": "sentra",
+                "x-trail": "x-trail",
+                "xtrail": "x-trail",
+                "patrol": "patrol",
+                "qashqai": "qashqai"
+            },
+            bmw: {
+                "3": "3-series",
+                "3 series": "3-series",
+                "3-series": "3-series",
+                "320i": "3-series",
+                "330i": "3-series",
+                "5 series": "5-series",
+                "5-series": "5-series",
+                "x1": "x1",
+                "x3": "x3",
+                "x5": "x5"
+            },
+            mercedes: {
+                "c class": "c-class",
+                "c-class": "c-class",
+                "e class": "e-class",
+                "e-class": "e-class",
+                "s class": "s-class",
+                "s-class": "s-class",
+                "gla": "gla",
+                "glc": "glc"
+            },
+            "mercedes-benz": {
+                "c class": "c-class",
+                "c-class": "c-class",
+                "e class": "e-class",
+                "e-class": "e-class",
+                "s class": "s-class",
+                "s-class": "s-class",
+                "gla": "gla",
+                "glc": "glc"
+            },
+            audi: {
+                "a3": "a3",
+                "a4": "a4",
+                "a6": "a6",
+                "q3": "q3",
+                "q5": "q5",
+                "q7": "q7"
+            },
+            ford: {
+                "mustang": "mustang",
+                "focus": "focus",
+                "fiesta": "fiesta",
+                "ranger": "ranger",
+                "escape": "escape",
+                "explorer": "explorer"
+            },
+            hyundai: {
+                "elantra": "elantra",
+                "sonata": "sonata",
+                "tucson": "tucson",
+                "santa fe": "santa-fe",
+                "ioniq": "ioniq",
+                "accent": "accent"
+            },
+            kia: {
+                "sportage": "sportage",
+                "sorento": "sorento",
+                "rio": "rio",
+                "cerato": "cerato",
+                "seltos": "seltos",
+                "picanto": "picanto"
+            },
+            mazda: {
+                "3": "3",
+                "6": "6",
+                "cx-3": "cx-3",
+                "cx-5": "cx-5",
+                "cx5": "cx-5",
+                "mx-5": "mx-5"
+            },
+            mitsubishi: {
+                "lancer": "lancer",
+                "outlander": "outlander",
+                "pajero": "pajero",
+                "montero": "montero",
+                "eclipse cross": "eclipse-cross"
+            },
+            volkswagen: {
+                "golf": "golf",
+                "polo": "polo",
+                "passat": "passat",
+                "tiguan": "tiguan",
+                "jetta": "jetta"
+            },
+            tesla: {
+                "model 3": "model-3",
+                "model s": "model-s",
+                "model x": "model-x",
+                "model y": "model-y"
+            },
+            lamborghini: {
+                "huracan": "huracan",
+                "huracán": "huracan",
+                "huracan tecnica": "huracan-tecnica",
+                "huracán tecnica": "huracan-tecnica",
+                "aventador": "aventador",
+                "urus": "urus"
+            }
+        };
+
+        const pages = {
+            dashboardPage: ["Dashboard", "Garage activity, service cost, and upcoming work."],
+            addCarPage: ["Add Car", "Register a customer vehicle and owner details."],
+            carsPage: ["Cars List", "Search, refresh, and review all vehicles."],
+            staffPage: ["Staff Availability", "Available workers, service types, payable amount, and car brand specialty."],
+            employeePage: ["Employee Portal", "Staff details, job role, availability, service type, payable amount, and car brand specialty."],
+            ratingsPage: ["Customer Ratings", "Employee feedback and work quality reviews."],
+            servicePage: ["Add Service", "Record maintenance work and the next service date."],
+            historyPage: ["Service History", "Review each vehicle's maintenance timeline."]
+        };
+        const ROLE_HOME = {
+            customer: "dashboardPage",
+            employee: "employeePage"
+        };
+        const ROLE_ACCESS = {
+            customer: ["dashboardPage", "addCarPage", "carsPage", "staffPage", "ratingsPage", "servicePage", "historyPage"],
+            employee: ["dashboardPage", "employeePage"]
+        };
+
+        const sampleCars = [
+            { id: 1, plateNumber: "CAB-4821", ownerName: "Nimal Perera", ownerContact: "0771234567", brand: "Toyota", model: "Corolla", year: 2021, mileage: 45200 },
+            { id: 2, plateNumber: "WP-KQ-1189", ownerName: "Asha Fernando", ownerContact: "0719876543", brand: "Honda", model: "Vezel", year: 2019, mileage: 63150 },
+            { id: 3, plateNumber: "CAR-2298", ownerName: "Ravi Silva", ownerContact: "0765558899", brand: "Nissan", model: "Leaf", year: 2020, mileage: 38800 }
+        ];
+
+        const sampleServices = [
+            { id: 1, carId: 1, serviceDate: "2026-04-18", serviceType: "Oil Change", description: "Engine oil and oil filter replaced.", cost: 18500, mileageAtService: 44800, nextServiceDate: "2026-07-18", status: "Completed" },
+            { id: 2, carId: 2, serviceDate: "2026-05-02", serviceType: "Brake Repair", description: "Front pads replaced and brake fluid checked.", cost: 42000, mileageAtService: 63100, nextServiceDate: "2026-08-02", status: "Completed" },
+            { id: 3, carId: 3, serviceDate: "2026-05-12", serviceType: "Inspection", description: "Battery health and tire inspection.", cost: 9000, mileageAtService: 39000, nextServiceDate: "2026-06-12", status: "Scheduled" }
+        ];
+
+        const sampleEmployees = [
+            { id: 1, employeeCode: "EMP-001", employeeName: "Kasun Jayasinghe", employeeContact: "0774561230", employeeRole: "Mechanic", employeeSalary: 95000, employeeExperience: "6 years", employeeAvailability: "Available", employeeServiceType: "Full Service", employeePayableAmount: 2500, employeeCarBrand: "Toyota", employeeShift: "Full Day" },
+            { id: 2, employeeCode: "EMP-002", employeeName: "Maya Fernando", employeeContact: "0712233445", employeeRole: "Service Advisor", employeeSalary: 85000, employeeExperience: "4 years", employeeAvailability: "Busy", employeeServiceType: "General Service", employeePayableAmount: 1800, employeeCarBrand: "Honda", employeeShift: "Morning" },
+            { id: 3, employeeCode: "EMP-003", employeeName: "Dilan Perera", employeeContact: "0769988776", employeeRole: "Electrician", employeeSalary: 90000, employeeExperience: "5 years", employeeAvailability: "Available", employeeServiceType: "Electrical Repair", employeePayableAmount: 3000, employeeCarBrand: "Nissan", employeeShift: "Evening" }
+        ];
+
+        const sampleRatings = [
+            { id: 1, customerName: "Asha Fernando", employeeId: 1, employeeName: "Kasun Jayasinghe", employeeRating: 5, qualityRating: 5, ratingDate: "2026-05-08", comment: "Quick repair and clear explanation about the service." },
+            { id: 2, customerName: "Ravi Silva", employeeId: 3, employeeName: "Dilan Perera", employeeRating: 4, qualityRating: 5, ratingDate: "2026-05-10", comment: "Electrical issue fixed well. Good quality work." }
+        ];
+
+        const state = {
+            apiOnline: false,
+            cars: [],
+            services: [],
+            employees: [],
+            ratings: [],
+            selectedHistoryCarId: "",
+            carSearch: "",
+            employeeSearch: "",
+            ratingSearch: "",
+            ratingFilter: "all",
+            showAvailableOnly: false,
+            userRole: "customer",
+            previewKey: "",
+            previewTimer: 0,
+            previewToken: 0,
+            localImageFiles: [],
+            localImageUrls: new Map()
+        };
+
+        const el = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            cacheElements();
+            wireEvents();
+            setDefaultDates();
+            renderBrandSuggestions();
+            renderModelSuggestions();
+            initSession();
+            updateCarPreview(true);
+            icons();
+        });
+
+        function cacheElements() {
+            [
+                "loginScreen", "appShell", "loginForm", "loginEmail", "loginPassword", "passwordToggle",
+                "demoLogin", "sidebar", "menuBtn", "logoutBtn", "refreshAll", "refreshCars",
+                "apiStatus", "apiStatusText", "pageTitle", "pageSubtitle", "sessionName",
+                "sessionEmail", "avatar", "carForm", "serviceForm", "carTable", "carSelect",
+                "historyCarSelect", "historyStatusFilter", "viewHistory", "serviceTable",
+                "employeeForm", "employeeCards", "employeeSearch", "showAvailableEmployees",
+                "employeeWorkList",
+                "employeeCode", "employeeName", "employeeContact", "employeeRole",
+                "employeeSalary", "employeeExperience", "employeeAvailability",
+                "employeeServiceType", "employeePayableAmount", "employeeCarBrand", "employeeShift",
+                "ratingForm", "ratingCards", "ratingSearch", "ratingFilter", "ratingEmployee",
+                "ratingCustomerName", "employeeRating", "qualityRating", "ratingDate", "ratingComment",
+                "carSearch", "serviceChart", "upcomingList", "toast", "toastMessage",
+                "statCars", "statServices", "statRevenue", "statUpcoming", "statEmployees", "statRating", "recentRatings", "brand", "model",
+                "year", "mileage", "carPreview", "carPreviewImage", "previewTitle",
+                "previewText", "previewBrand", "previewModel", "previewYear",
+                "previewMileage", "mappedPreviewLink", "previewImageState", "brandOptions",
+                "modelOptions"
+            ].forEach(id => el[id] = document.getElementById(id));
+        }
+
+        function wireEvents() {
+            el.loginForm.addEventListener("submit", login);
+            el.demoLogin.addEventListener("click", demoLogin);
+            el.passwordToggle.addEventListener("click", togglePassword);
+            document.querySelectorAll(".role-option").forEach(button => {
+                button.addEventListener("click", () => selectLoginRole(button.dataset.role));
+            });
+            el.logoutBtn.addEventListener("click", logout);
+            el.menuBtn.addEventListener("click", () => el.sidebar.classList.toggle("open"));
+            el.refreshAll.addEventListener("click", () => loadCars(true));
+            el.refreshCars.addEventListener("click", () => loadCars(true));
+            el.carForm.addEventListener("submit", addCar);
+            el.employeeForm.addEventListener("submit", addEmployee);
+            el.ratingForm.addEventListener("submit", addRating);
+            el.carForm.addEventListener("reset", () => setTimeout(() => {
+                renderModelSuggestions();
+                updateCarPreview(true);
+            }, 0));
+            el.serviceForm.addEventListener("submit", addService);
+            el.employeeWorkList.addEventListener("click", updateWorkStatus);
+            el.viewHistory.addEventListener("click", loadServiceHistory);
+            el.historyCarSelect.addEventListener("change", loadServiceHistory);
+            el.historyStatusFilter.addEventListener("change", renderServiceHistory);
+            ["brand", "model", "year", "mileage"].forEach(id => {
+                el[id].addEventListener("input", () => scheduleCarPreview());
+            });
+            el.brand.addEventListener("input", renderModelSuggestions);
+            el.carSearch.addEventListener("input", event => {
+                state.carSearch = event.target.value.trim().toLowerCase();
+                renderCars();
+            });
+            el.employeeSearch.addEventListener("input", event => {
+                state.employeeSearch = event.target.value.trim().toLowerCase();
+                renderEmployees();
+            });
+            el.showAvailableEmployees.addEventListener("click", () => {
+                state.showAvailableOnly = !state.showAvailableOnly;
+                el.showAvailableEmployees.classList.toggle("primary", state.showAvailableOnly);
+                el.showAvailableEmployees.classList.toggle("secondary", !state.showAvailableOnly);
+                renderEmployees();
+            });
+            el.ratingSearch.addEventListener("input", event => {
+                state.ratingSearch = event.target.value.trim().toLowerCase();
+                renderRatings();
+            });
+            el.ratingFilter.addEventListener("change", event => {
+                state.ratingFilter = event.target.value;
+                renderRatings();
+            });
+
+            document.querySelectorAll(".nav-link").forEach(button => {
+                button.addEventListener("click", () => navigate(button.dataset.page));
+            });
+        }
+
+        function initSession() {
+            if (getSession()) {
+                openApp();
+            } else {
+                el.loginScreen.classList.remove("hidden");
+                el.appShell.classList.add("hidden");
+            }
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const email = el.loginEmail.value.trim();
+            const password = el.loginPassword.value.trim();
+
+            if (!email.includes("@") || password.length < 4) {
+                toast("Enter a valid email and a password with at least 4 characters.");
+                return;
+            }
+
+            saveSession(email, state.userRole);
+            openApp();
+        }
+
+        function demoLogin() {
+            el.loginEmail.value = state.userRole === "employee" ? "employee@garage.com" : "customer@example.com";
+            el.loginPassword.value = "service123";
+            saveSession(el.loginEmail.value, state.userRole);
+            openApp();
+        }
+
+        function selectLoginRole(role) {
+            state.userRole = role === "employee" ? "employee" : "customer";
+            document.querySelectorAll(".role-option").forEach(button => {
+                button.classList.toggle("active", button.dataset.role === state.userRole);
+            });
+        }
+
+        function saveSession(email, role = "customer") {
+            localStorage.setItem(STORAGE.session, JSON.stringify({
+                email,
+                name: email.split("@")[0].replace(/[._-]/g, " "),
+                role,
+                signedInAt: new Date().toISOString()
+            }));
+        }
+
+        function getSession() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE.session));
+            } catch {
+                return null;
+            }
+        }
+
+        function openApp() {
+            const session = getSession() || { name: "Customer", email: "customer@example.com", role: "customer" };
+            state.userRole = session.role === "employee" ? "employee" : "customer";
+            el.sessionName.textContent = titleCase(session.name || "Staff");
+            el.sessionEmail.textContent = `${session.email} - ${titleCase(state.userRole)} portal`;
+            el.avatar.textContent = session.email.charAt(0).toUpperCase();
+            el.loginScreen.classList.add("hidden");
+            el.appShell.classList.remove("hidden");
+            loadEmployees();
+            configureRoleAccess();
+            navigate(ROLE_HOME[state.userRole] || "dashboardPage");
+            loadCars();
+        }
+
+        function logout() {
+            localStorage.removeItem(STORAGE.session);
+            el.appShell.classList.add("hidden");
+            el.loginScreen.classList.remove("hidden");
+            toast("Logged out successfully.");
+        }
+
+        function togglePassword() {
+            const show = el.loginPassword.type === "password";
+            el.loginPassword.type = show ? "text" : "password";
+            el.passwordToggle.title = show ? "Hide password" : "Show password";
+            el.passwordToggle.innerHTML = `<i data-lucide="${show ? "eye-off" : "eye"}"></i>`;
+            icons();
+        }
+
+        function configureRoleAccess() {
+            const allowed = ROLE_ACCESS[state.userRole] || ROLE_ACCESS.customer;
+            document.querySelectorAll(".nav-link").forEach(button => {
+                button.classList.toggle("hidden", !allowed.includes(button.dataset.page));
+            });
+        }
+
+        function navigate(pageId) {
+            const allowed = ROLE_ACCESS[state.userRole] || ROLE_ACCESS.customer;
+            if (!allowed.includes(pageId)) {
+                pageId = ROLE_HOME[state.userRole] || "dashboardPage";
+            }
+
+            document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+            document.getElementById(pageId).classList.add("active");
+            document.querySelectorAll(".nav-link").forEach(button => {
+                button.classList.toggle("active", button.dataset.page === pageId);
+            });
+            el.pageTitle.textContent = pages[pageId][0];
+            el.pageSubtitle.textContent = pages[pageId][1];
+            el.sidebar.classList.remove("open");
+            if (pageId === "historyPage") loadServiceHistory();
+        }
+
+        function renderBrandSuggestions() {
+            el.brandOptions.innerHTML = Object.keys(EXACT_MODEL_ALIASES)
+                .map(make => `<option value="${safe(titleCase(make.replace(/-/g, " ")))}"></option>`)
+                .join("");
+        }
+
+        function renderModelSuggestions() {
+            const make = normalizeCarTerm(value("brand"));
+            const aliases = EXACT_MODEL_ALIASES[make] || {};
+            el.modelOptions.innerHTML = Object.keys(aliases)
+                .map(model => `<option value="${safe(titleCase(model))}"></option>`)
+                .join("");
+        }
+
+        function loadLocalImageFolder(event) {
+            state.localImageUrls.forEach(url => URL.revokeObjectURL(url));
+            state.localImageUrls.clear();
+
+            state.localImageFiles = Array.from(event.target.files || [])
+                .filter(file => file.type.startsWith("image/"))
+                .map(file => {
+                    const objectUrl = URL.createObjectURL(file);
+                    state.localImageUrls.set(file.name, objectUrl);
+                    return {
+                        name: file.name,
+                        path: file.webkitRelativePath || file.name,
+                        key: normalizeImageName(file.webkitRelativePath || file.name),
+                        url: objectUrl
+                    };
+                });
+
+            toast(`${formatNumber(state.localImageFiles.length)} car images loaded.`);
+            updateCarPreview(true);
+        }
+
+        function scheduleCarPreview() {
+            updateCarPreviewText(getMappedPreview(value("brand"), value("model")));
+            clearTimeout(state.previewTimer);
+            state.previewTimer = setTimeout(() => updateCarPreview(false), 500);
+        }
+
+        function updateCarPreview(forceImage) {
+            const brand = value("brand");
+            const model = value("model");
+            const displayName = [brand, model].filter(Boolean).join(" ").trim();
+            const year = value("year");
+            const preview = getMappedPreview(brand, model);
+            const previewKey = [
+                displayName,
+                year,
+                preview ? preview.image : "",
+            ].join(" ").toLowerCase();
+
+            updateCarPreviewText(preview);
+
+            if (!displayName) {
+                state.previewKey = "";
+                state.previewToken += 1;
+                el.carPreview.classList.remove("is-loading");
+                el.carPreviewImage.src = DEFAULT_PREVIEW_IMAGE;
+                el.carPreviewImage.alt = "Car preview";
+                el.mappedPreviewLink.href = "#";
+                el.mappedPreviewLink.classList.add("hidden");
+                el.previewImageState.textContent = "Enter brand and model";
+                return;
+            }
+
+            if (!forceImage && state.previewKey === previewKey) {
+                return;
+            }
+
+            state.previewKey = previewKey;
+            state.previewToken += 1;
+
+            if (!preview) {
+                el.carPreview.classList.remove("is-loading");
+                el.carPreviewImage.src = DEFAULT_PREVIEW_IMAGE;
+                el.carPreviewImage.alt = "Car image not found";
+                el.mappedPreviewLink.href = "#";
+                el.mappedPreviewLink.classList.add("hidden");
+                el.previewImageState.textContent = "No exact image mapping";
+                return;
+            }
+
+            el.mappedPreviewLink.href = preview.image;
+            el.mappedPreviewLink.classList.remove("hidden");
+
+            el.carPreview.classList.add("is-loading");
+            el.previewImageState.textContent = "Loading mapped image...";
+
+            loadPreviewImage(preview.sources, `${preview.name} preview`, state.previewToken);
+        }
+
+        function updateCarPreviewText(preview) {
+            const brand = value("brand");
+            const model = value("model");
+            const year = value("year");
+            const mileage = value("mileage");
+            const displayName = [brand, model].filter(Boolean).join(" ").trim();
+
+            el.previewTitle.textContent = preview ? preview.name : (displayName || "Enter brand and model");
+            el.previewText.textContent = preview
+                ? "Matching car preview loaded."
+                : displayName
+                    ? "No exact image mapping found. Add this brand and model to LOCAL_CAR_IMAGE_MAP."
+                    : "Add images in car-images, map them in LOCAL_CAR_IMAGE_MAP, then type a make and model.";
+            el.previewBrand.textContent = brand || "Not selected";
+            el.previewModel.textContent = model || "Not selected";
+            el.previewYear.textContent = year || "-";
+            el.previewMileage.textContent = mileage ? formatNumber(mileage) : "0";
+        }
+
+        function getMappedPreview(brand, model) {
+            const resolved = resolveCarInput(brand, model);
+            const make = resolved.make;
+            const rawModel = resolved.model;
+            if (!make || !rawModel) {
+                return null;
+            }
+
+            const modelKey = getExactModelFamily(make, rawModel);
+            const makeMap = LOCAL_CAR_IMAGE_MAP[make] || {};
+            const fallbackKey = Object.keys(makeMap).find(key => rawModel.includes(key) || key.includes(rawModel));
+            const mappedImage = makeMap[modelKey] || makeMap[rawModel] || makeMap[fallbackKey];
+            const sources = mappedImage ? mappedImageSources(mappedImage, make, modelKey, rawModel) : [];
+
+            return sources.length ? {
+                name: [brand, model].filter(Boolean).join(" "),
+                image: sources[0],
+                sources
+            } : null;
+        }
+
+        function resolveCarInput(brand, model) {
+            let make = normalizeCarTerm(brand);
+            let rawModel = normalizeCarTerm(model);
+
+            if (LOCAL_CAR_IMAGE_MAP[make]) {
+                return { make, model: rawModel };
+            }
+
+            const combined = [brand, model].filter(Boolean).join(" ");
+            const combinedKey = normalizeCarTerm(combined);
+            const knownMake = Object.keys(LOCAL_CAR_IMAGE_MAP)
+                .sort((a, b) => b.length - a.length)
+                .find(candidate => combinedKey === candidate || combinedKey.startsWith(`${candidate}-`));
+
+            if (!knownMake) {
+                return { make, model: rawModel };
+            }
+
+            const combinedModel = combinedKey
+                .replace(new RegExp(`^${escapeRegExp(knownMake)}-?`), "")
+                .replace(/^-+/, "");
+
+            return {
+                make: knownMake,
+                model: rawModel || combinedModel
+            };
+        }
+
+        function mappedImageSources(mappedImage, make, modelKey, rawModel) {
+            const mapped = Array.isArray(mappedImage) ? mappedImage : [mappedImage];
+            const generatedNames = [`${make}-${modelKey}`, `${make}-${rawModel}`];
+            const candidates = [];
+
+            mapped.forEach(path => {
+                candidates.push(path);
+                imagePathVariants(path).forEach(variant => candidates.push(variant));
+            });
+
+            generatedNames.forEach(name => {
+                LOCAL_IMAGE_EXTENSIONS.forEach(ext => {
+                    candidates.push(`${LOCAL_IMAGE_FOLDER}/${name}.${ext}`);
+                });
+            });
+
+            return Array.from(new Set(candidates.filter(Boolean)));
+        }
+
+        function imagePathVariants(path) {
+            const cleanPath = String(path || "");
+            const base = cleanPath.replace(/\.[^/.]+$/, "");
+            return LOCAL_IMAGE_EXTENSIONS.map(ext => `${base}.${ext}`);
+        }
+
+        function findBestPreview(brand, model) {
+            const localPreview = getLocalPreview(brand, model);
+            if (localPreview) {
+                return localPreview;
+            }
+
+            const relativePreview = getRelativeFolderPreview(brand, model);
+            if (relativePreview) {
+                return relativePreview;
+            }
+
+            return getOfficialPreview(brand, model);
+        }
+
+        function getLocalPreview(brand, model) {
+            const make = normalizeCarTerm(brand);
+            const rawModel = normalizeCarTerm(model);
+            if (!make || !rawModel || !state.localImageFiles.length) {
+                return null;
+            }
+
+            const modelFamily = getExactModelFamily(make, rawModel);
+            const searchKeys = imageSearchKeys(make, rawModel, modelFamily);
+            const match = state.localImageFiles.find(file => searchKeys.some(key => file.key.includes(key)));
+
+            return match ? {
+                type: "local",
+                name: [brand, model].filter(Boolean).join(" "),
+                image: match.url,
+                source: match.path,
+                site: "",
+                sources: [match.url]
+            } : null;
+        }
+
+        function getRelativeFolderPreview(brand, model) {
+            const make = normalizeCarTerm(brand);
+            const rawModel = normalizeCarTerm(model);
+            if (!make || !rawModel) {
+                return null;
+            }
+
+            const modelFamily = getExactModelFamily(make, rawModel);
+            const names = imageSearchKeys(make, rawModel, modelFamily);
+            const sources = [];
+
+            names.forEach(name => {
+                LOCAL_IMAGE_EXTENSIONS.forEach(ext => {
+                    sources.push(`${LOCAL_IMAGE_FOLDER}/${name}.${ext}`);
+                });
+            });
+
+            return {
+                type: "relative",
+                name: [brand, model].filter(Boolean).join(" "),
+                image: sources[0],
+                source: `${LOCAL_IMAGE_FOLDER} folder`,
+                site: "",
+                sources
+            };
+        }
+
+        function getOfficialPreview(brand, model) {
+            const make = normalizeCarTerm(brand);
+            const rawModel = normalizeCarTerm(model);
+            if (!make || !rawModel) {
+                return null;
+            }
+
+            const officialModels = OFFICIAL_CAR_PREVIEWS[make] || {};
+            const aliasModel = getExactModelFamily(make, rawModel);
+
+            if (officialModels[rawModel]) {
+                return officialModels[rawModel];
+            }
+
+            if (officialModels[aliasModel]) {
+                return officialModels[aliasModel];
+            }
+
+            const matchedKey = rawModel.length >= 3
+                ? Object.keys(officialModels).find(key => rawModel.includes(key) || key.includes(rawModel))
+                : "";
+
+            return matchedKey ? officialModels[matchedKey] : null;
+        }
+
+        function loadPreviewImage(sources, alt, token, index = 0) {
+            if (token !== state.previewToken) {
+                return;
+            }
+
+            if (index >= sources.length) {
+                el.carPreview.classList.remove("is-loading");
+                el.carPreviewImage.src = DEFAULT_PREVIEW_IMAGE;
+                el.carPreviewImage.alt = "Car preview image unavailable";
+                el.previewImageState.textContent = "Mapped file missing";
+                return;
+            }
+
+            const image = new Image();
+            image.onload = () => {
+                if (token !== state.previewToken) {
+                    return;
+                }
+                el.carPreviewImage.src = sources[index];
+                el.carPreviewImage.alt = alt;
+                el.carPreview.classList.remove("is-loading");
+                el.previewImageState.textContent = "Mapped image loaded";
+            };
+            image.onerror = () => loadPreviewImage(sources, alt, token, index + 1);
+            image.src = sources[index];
+        }
+
+        function normalizeCarTerm(value) {
+            return String(value)
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/mercedes benz/g, "mercedes-benz")
+                .replace(/[^a-z0-9-]+/g, " ")
+                .trim()
+                .replace(/\s+/g, "-");
+        }
+
+        function normalizeImageName(value) {
+            return normalizeCarTerm(
+                String(value)
+                    .replace(/\.[^.]+$/, "")
+                    .replace(/[\\/]/g, " ")
+            );
+        }
+
+        function imageSearchKeys(make, rawModel, modelFamily) {
+            return Array.from(new Set([
+                `${make}-${modelFamily}`,
+                `${make}-${rawModel}`
+            ].filter(key => key && key.length >= 2)));
+        }
+
+        function escapeRegExp(value) {
+            return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function getExactModelFamily(make, rawModel) {
+            const makeAliases = EXACT_MODEL_ALIASES[make] || {};
+            const lookup = rawModel.replace(/-/g, " ");
+            return makeAliases[rawModel] || makeAliases[lookup] || rawModel;
+        }
+
+        async function loadCars(showMessage = false) {
+            try {
+                const response = await fetch(API + "/cars");
+                if (!response.ok) throw new Error("API failed");
+
+                const cars = await response.json();
+                state.cars = Array.isArray(cars) ? cars : [];
+                state.apiOnline = true;
+                await loadAllServicesFromApi();
+                setApiStatus(true);
+            } catch {
+                state.apiOnline = false;
+                state.cars = readLocal(STORAGE.cars, sampleCars);
+                state.services = readLocal(STORAGE.services, sampleServices);
+                setApiStatus(false);
+            }
+
+            renderAll();
+            if (showMessage) toast(state.apiOnline ? "Data refreshed from API." : "Loaded local demo data.");
+        }
+
+        function loadEmployees() {
+            state.employees = readLocal(STORAGE.employees, sampleEmployees);
+            state.ratings = readLocal(STORAGE.ratings, sampleRatings);
+        }
+
+        async function loadAllServicesFromApi() {
+            const lists = await Promise.all(state.cars.map(async car => {
+                try {
+                    const response = await fetch(`${API}/services/car/${car.id}`);
+                    if (!response.ok) return [];
+                    const services = await response.json();
+                    return Array.isArray(services) ? services.map(service => ({ ...service, carId: car.id })) : [];
+                } catch {
+                    return [];
+                }
+            }));
+
+            state.services = lists.flat();
+        }
+
+        async function addCar(event) {
+            event.preventDefault();
+
+            const car = {
+                plateNumber: value("plateNumber").toUpperCase(),
+                ownerName: value("ownerName"),
+                ownerContact: value("ownerContact"),
+                brand: value("brand"),
+                model: value("model"),
+                year: numberValue("year"),
+                mileage: numberValue("mileage"),
+                note: value("quickNote")
+            };
+
+            try {
+                const response = await fetch(API + "/cars", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(car)
+                });
+                if (!response.ok) throw new Error("Save failed");
+                toast("Car added successfully.");
+                el.carForm.reset();
+                updateCarPreview(true);
+                await loadCars();
+            } catch {
+                state.cars.push({ id: nextId(state.cars), ...car });
+                saveLocal();
+                renderAll();
+                el.carForm.reset();
+                updateCarPreview(true);
+                toast("Car saved in local demo mode.");
+            }
+        }
+
+        function addEmployee(event) {
+            event.preventDefault();
+
+            const employee = {
+                id: nextId(state.employees),
+                employeeCode: value("employeeCode").toUpperCase(),
+                employeeName: value("employeeName"),
+                employeeContact: value("employeeContact"),
+                employeeRole: value("employeeRole"),
+                employeeSalary: numberValue("employeeSalary"),
+                employeeExperience: value("employeeExperience"),
+                employeeAvailability: value("employeeAvailability"),
+                employeeServiceType: value("employeeServiceType"),
+                employeePayableAmount: numberValue("employeePayableAmount"),
+                employeeCarBrand: value("employeeCarBrand"),
+                employeeShift: value("employeeShift")
+            };
+
+            state.employees.push(employee);
+            saveLocal();
+            renderRatingEmployeeOptions();
+            renderEmployees();
+            renderDashboard();
+            el.employeeForm.reset();
+            toast("Employee added successfully.");
+        }
+
+        function addRating(event) {
+            event.preventDefault();
+
+            const employee = state.employees.find(item => Number(item.id) === Number(value("ratingEmployee")));
+            if (!employee) {
+                toast("Select an employee before adding a rating.");
+                return;
+            }
+
+            const rating = {
+                id: nextId(state.ratings),
+                customerName: value("ratingCustomerName"),
+                employeeId: employee.id,
+                employeeName: employee.employeeName,
+                employeeRating: numberValue("employeeRating"),
+                qualityRating: numberValue("qualityRating"),
+                ratingDate: value("ratingDate"),
+                comment: value("ratingComment")
+            };
+
+            state.ratings.push(rating);
+            saveLocal();
+            renderRatings();
+            renderDashboard();
+            el.ratingForm.reset();
+            setDefaultDates();
+            toast("Customer rating added successfully.");
+        }
+
+        async function addService(event) {
+            event.preventDefault();
+
+            const carId = Number(el.carSelect.value);
+            if (!carId) {
+                toast("Add a car before creating a service record.");
+                return;
+            }
+
+            const service = {
+                serviceDate: value("serviceDate"),
+                serviceType: value("serviceType"),
+                description: value("description"),
+                cost: numberValue("cost"),
+                mileageAtService: numberValue("mileageAtService"),
+                nextServiceDate: value("nextServiceDate"),
+                status: value("status") || "Scheduled"
+            };
+
+            try {
+                const response = await fetch(`${API}/services/car/${carId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(service)
+                });
+                if (!response.ok) throw new Error("Save failed");
+                toast("Service record added successfully.");
+                el.serviceForm.reset();
+                setDefaultDates();
+                await loadCars();
+            } catch {
+                state.services.push({ id: nextId(state.services), carId, ...service });
+                const car = state.cars.find(item => Number(item.id) === carId);
+                if (car) car.mileage = service.mileageAtService || car.mileage;
+                saveLocal();
+                renderAll();
+                el.serviceForm.reset();
+                setDefaultDates();
+                toast("Service saved in local demo mode.");
+            }
+        }
+
+        async function loadServiceHistory() {
+            const carId = el.historyCarSelect.value;
+            if (!carId) {
+                renderServiceHistory([]);
+                return;
+            }
+
+            state.selectedHistoryCarId = carId;
+
+            if (state.apiOnline) {
+                try {
+                    const response = await fetch(`${API}/services/car/${carId}`);
+                    if (response.ok) {
+                        const services = await response.json();
+                        state.services = state.services.filter(service => Number(service.carId) !== Number(carId));
+                        state.services.push(...services.map(service => ({ ...service, carId: Number(carId) })));
+                    }
+                } catch {
+                    state.apiOnline = false;
+                    setApiStatus(false);
+                }
+            }
+
+            renderServiceHistory();
+        }
+
+        function renderAll() {
+            renderCars();
+            renderSelects();
+            renderEmployees();
+            renderEmployeeWorkList();
+            renderRatingEmployeeOptions();
+            renderRatings();
+            renderDashboard();
+            renderServiceHistory();
+            icons();
+        }
+
+        function renderCars() {
+            const cars = state.cars.filter(car => {
+                const text = [car.id, car.plateNumber, car.ownerName, car.ownerContact, car.brand, car.model, car.year, car.mileage].join(" ").toLowerCase();
+                return text.includes(state.carSearch);
+            });
+
+            el.carTable.innerHTML = cars.length ? cars.map(car => `
+                <tr>
+                    <td>${safe(car.id)}</td>
+                    <td><strong>${safe(car.plateNumber)}</strong></td>
+                    <td>${safe(car.ownerName)}</td>
+                    <td>${safe(car.ownerContact || "-")}</td>
+                    <td>${safe(car.brand)}</td>
+                    <td>${safe(car.model)}</td>
+                    <td>${safe(car.year || "-")}</td>
+                    <td>${formatNumber(car.mileage)}</td>
+                </tr>
+            `).join("") : emptyRow(8, "No cars match the current search.");
+        }
+
+        function renderEmployees() {
+            const employees = state.employees
+                .filter(employee => !state.showAvailableOnly || employee.employeeAvailability === "Available")
+                .filter(employee => {
+                    const text = [
+                        employee.employeeCode,
+                        employee.employeeName,
+                        employee.employeeContact,
+                        employee.employeeRole,
+                        employee.employeeSalary,
+                        employee.employeeExperience,
+                        employee.employeeAvailability,
+                        employee.employeeServiceType,
+                        employee.employeePayableAmount,
+                        employee.employeeCarBrand,
+                        employee.employeeShift
+                    ].join(" ").toLowerCase();
+                    return text.includes(state.employeeSearch);
+                });
+
+            el.employeeCards.innerHTML = employees.length ? employees.map(employee => `
+                <article class="employee-card">
+                    <div class="employee-head">
+                        <span class="employee-avatar">${safe(employeeInitials(employee.employeeName))}</span>
+                        <span class="employee-name">
+                            <strong>${safe(employee.employeeName)}</strong>
+                            <span>${safe(employee.employeeCode)}</span>
+                        </span>
+                    </div>
+                    <div class="employee-role"><i data-lucide="${roleIcon(employee.employeeRole)}"></i>${safe(employee.employeeRole)}</div>
+                    <div class="employee-details">
+                        <span><small>Contact</small><strong>${safe(employee.employeeContact)}</strong></span>
+                        <span><small>Salary</small><strong>${formatCurrency(employee.employeeSalary)}</strong></span>
+                        <span><small>Experience</small><strong>${safe(employee.employeeExperience)}</strong></span>
+                        <span><small>Status</small><strong>${availabilityChip(employee.employeeAvailability)}</strong></span>
+                        <span><small>Service</small><strong>${safe(employee.employeeServiceType || "-")}</strong></span>
+                        <span><small>Payable</small><strong>${formatCurrency(employee.employeePayableAmount)}</strong></span>
+                        <span><small>Brand</small><strong>${safe(employee.employeeCarBrand || "-")}</strong></span>
+                        <span><small>Shift</small><strong>${safe(employee.employeeShift || "-")}</strong></span>
+                    </div>
+                </article>
+            `).join("") : emptyBlock("No employees found.", "Add an employee or adjust the search filter.");
+
+            icons();
+        }
+
+        function renderEmployeeWorkList() {
+            const activeStatuses = new Set(["Scheduled", "In Progress", "Waiting Parts"]);
+            const workItems = state.services
+                .filter(service => activeStatuses.has(service.status || "Scheduled"))
+                .sort((a, b) => {
+                    const dateSort = String(a.serviceDate || "").localeCompare(String(b.serviceDate || ""));
+                    return dateSort || String(a.serviceType || "").localeCompare(String(b.serviceType || ""));
+                });
+
+            el.employeeWorkList.innerHTML = workItems.length ? workItems.map(service => {
+                const car = state.cars.find(item => Number(item.id) === Number(service.carId));
+                const vehicleName = car ? `${car.brand || "-"} ${car.model || ""} ${car.year || ""}`.trim() : "Vehicle details not found";
+                const plate = car ? car.plateNumber : "Unknown vehicle";
+                const status = service.status || "Scheduled";
+                const serviceId = Number(service.id || 0);
+                const startButton = status !== "In Progress" ? `
+                    <button class="btn secondary" type="button" data-work-id="${safe(serviceId)}" data-work-status="In Progress">
+                        <i data-lucide="play"></i>Start Work
+                    </button>
+                ` : "";
+                return `
+                    <article class="employee-card">
+                        <div class="employee-head">
+                            <span class="employee-avatar"><i data-lucide="car-front"></i></span>
+                            <span class="employee-name">
+                                <strong>${safe(service.serviceType || "Service Work")}</strong>
+                                <span>${safe(plate)} - ${safe(vehicleName)}</span>
+                            </span>
+                        </div>
+                        <div class="employee-role"><i data-lucide="alert-circle"></i>Customer Problem</div>
+                        <div class="employee-details">
+                            <span><small>Owner</small><strong>${safe(car?.ownerName || "Unknown")}</strong></span>
+                            <span><small>Contact</small><strong>${safe(car?.ownerContact || "-")}</strong></span>
+                            <span><small>Service Date</small><strong>${formatDate(service.serviceDate)}</strong></span>
+                            <span><small>Status</small><strong>${chip(status)}</strong></span>
+                            <span><small>Mileage</small><strong>${formatNumber(service.mileageAtService || car?.mileage || 0)} km</strong></span>
+                            <span><small>Cost</small><strong>${formatCurrency(service.cost)}</strong></span>
+                            <span class="wide"><small>Problem</small><strong>${safe(service.description || "No problem description added.")}</strong></span>
+                        </div>
+                        <div class="work-actions">
+                            ${startButton}
+                            <button class="btn primary" type="button" data-work-id="${safe(serviceId)}" data-work-status="Completed">
+                                <i data-lucide="check"></i>Complete
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join("") : emptyBlock("No active work requests.", "Customer service requests will appear here when they are scheduled, in progress, or waiting for parts.");
+
+            icons();
+        }
+
+        function updateWorkStatus(event) {
+            const button = event.target.closest("[data-work-status]");
+            if (!button) return;
+
+            const serviceId = Number(button.dataset.workId);
+            const service = state.services.find(item => Number(item.id) === serviceId);
+            if (!service) {
+                toast("Service record not found.");
+                return;
+            }
+
+            service.status = button.dataset.workStatus;
+            saveLocal();
+            renderAll();
+            toast(`Work marked as ${service.status}.`);
+        }
+
+        function renderSelects() {
+            const options = state.cars.map(car => `<option value="${safe(car.id)}">${safe(car.plateNumber)} - ${safe(car.brand)} ${safe(car.model)}</option>`).join("");
+            const empty = `<option value="">No cars available</option>`;
+            el.carSelect.innerHTML = options || empty;
+            el.historyCarSelect.innerHTML = options || empty;
+
+            if (state.selectedHistoryCarId && state.cars.some(car => Number(car.id) === Number(state.selectedHistoryCarId))) {
+                el.historyCarSelect.value = state.selectedHistoryCarId;
+            } else if (state.cars[0]) {
+                el.historyCarSelect.value = state.cars[0].id;
+                state.selectedHistoryCarId = String(state.cars[0].id);
+            }
+        }
+
+        function renderRatingEmployeeOptions() {
+            const options = state.employees.map(employee => `
+                <option value="${safe(employee.id)}">${safe(employee.employeeName)} - ${safe(employee.employeeRole)}</option>
+            `).join("");
+            el.ratingEmployee.innerHTML = options || `<option value="">No employees available</option>`;
+        }
+
+        function renderDashboard() {
+            const revenue = state.services.reduce((sum, service) => sum + Number(service.cost || 0), 0);
+            const upcoming = upcomingServices();
+            const averageRating = averageCustomerRating();
+
+            el.statCars.textContent = formatNumber(state.cars.length);
+            el.statServices.textContent = formatNumber(state.services.length);
+            el.statRevenue.textContent = formatCompactCurrency(revenue);
+            el.statUpcoming.textContent = formatNumber(upcoming.length);
+            el.statEmployees.textContent = formatNumber(state.employees.filter(employee => employee.employeeAvailability === "Available").length);
+            el.statRating.textContent = averageRating ? averageRating.toFixed(1) : "0.0";
+
+            renderChart();
+            renderUpcoming(upcoming);
+            renderRecentRatings();
+        }
+
+        function renderChart() {
+            const counts = state.services.reduce((map, service) => {
+                map[service.serviceType] = (map[service.serviceType] || 0) + 1;
+                return map;
+            }, {});
+
+            const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            const max = Math.max(...rows.map(row => row[1]), 1);
+
+            el.serviceChart.innerHTML = rows.length ? rows.map(([type, count]) => `
+                <div class="chart-row">
+                    <span>${safe(type)}</span>
+                    <div class="bar"><span style="width:${Math.max((count / max) * 100, 8)}%"></span></div>
+                    <span>${formatNumber(count)}</span>
+                </div>
+            `).join("") : emptyBlock("No service workload yet.", "Add service records to build the chart.");
+        }
+
+        function renderUpcoming(upcoming) {
+            el.upcomingList.innerHTML = upcoming.length ? upcoming.slice(0, 5).map(service => {
+                const car = state.cars.find(item => Number(item.id) === Number(service.carId));
+                return `
+                    <div class="quick-item">
+                        <div>
+                            <strong>${safe(car ? car.plateNumber : "Vehicle")}</strong>
+                            <span>${safe(service.serviceType)} on ${formatDate(service.nextServiceDate)}</span>
+                        </div>
+                        ${chip(service.status)}
+                    </div>
+                `;
+            }).join("") : emptyBlock("No upcoming services.", "Completed records with next dates will appear here.");
+        }
+
+        function renderRatings() {
+            const ratings = filteredRatings();
+
+            el.ratingCards.innerHTML = ratings.length ? ratings.map(rating => `
+                <article class="employee-card">
+                    <div class="employee-head">
+                        <span class="employee-avatar">${safe(employeeInitials(rating.customerName))}</span>
+                        <span class="employee-name">
+                            <strong>${safe(rating.customerName)}</strong>
+                            <span>${formatDate(rating.ratingDate)}</span>
+                        </span>
+                    </div>
+                    <div class="employee-role"><i data-lucide="user-round-check"></i>${safe(rating.employeeName)}</div>
+                    <div class="employee-details">
+                        <span><small>Employee</small><strong>${starText(rating.employeeRating)}</strong></span>
+                        <span><small>Quality</small><strong>${starText(rating.qualityRating)}</strong></span>
+                    </div>
+                    <p style="margin: 0; color: var(--muted); line-height: 1.5;">${safe(rating.comment)}</p>
+                </article>
+            `).join("") : emptyBlock("No ratings found.", "Add customer feedback or adjust the filter.");
+
+            icons();
+        }
+
+        function renderRecentRatings() {
+            const ratings = [...state.ratings]
+                .sort((a, b) => String(b.ratingDate || "").localeCompare(String(a.ratingDate || "")))
+                .slice(0, 4);
+
+            el.recentRatings.innerHTML = ratings.length ? ratings.map(rating => `
+                <div class="quick-item">
+                    <div>
+                        <strong>${safe(rating.employeeName)} - ${starText(averageRatingFor(rating))}</strong>
+                        <span>${safe(rating.customerName)}: ${safe(rating.comment)}</span>
+                    </div>
+                    <span class="chip info">${formatDate(rating.ratingDate)}</span>
+                </div>
+            `).join("") : emptyBlock("No customer ratings yet.", "New feedback will appear here.");
+        }
+
+        function renderServiceHistory(override) {
+            const carId = state.selectedHistoryCarId || el.historyCarSelect.value;
+            const filter = el.historyStatusFilter.value;
+            const services = override || state.services
+                .filter(service => Number(service.carId) === Number(carId))
+                .filter(service => filter === "all" || service.status === filter)
+                .sort((a, b) => String(b.serviceDate || "").localeCompare(String(a.serviceDate || "")));
+
+            el.serviceTable.innerHTML = services.length ? services.map(service => `
+                <tr>
+                    <td>${formatDate(service.serviceDate)}</td>
+                    <td>${safe(service.serviceType || "-")}</td>
+                    <td>${safe(service.description || "-")}</td>
+                    <td>${formatCurrency(service.cost)}</td>
+                    <td>${formatNumber(service.mileageAtService || 0)}</td>
+                    <td>${service.nextServiceDate ? formatDate(service.nextServiceDate) : "-"}</td>
+                    <td>${chip(service.status)}</td>
+                </tr>
+            `).join("") : emptyRow(7, "No service history found for this vehicle.");
+        }
+
+        function upcomingServices() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            return state.services
+                .filter(service => service.nextServiceDate)
+                .map(service => ({ ...service, dueDate: new Date(service.nextServiceDate + "T00:00:00") }))
+                .filter(service => service.dueDate >= today)
+                .sort((a, b) => a.dueDate - b.dueDate);
+        }
+
+        function filteredRatings() {
+            return state.ratings
+                .filter(rating => {
+                    const average = Math.round(averageRatingFor(rating));
+                    return state.ratingFilter === "all" || String(average) === state.ratingFilter;
+                })
+                .filter(rating => {
+                    const text = [
+                        rating.customerName,
+                        rating.employeeName,
+                        rating.employeeRating,
+                        rating.qualityRating,
+                        rating.ratingDate,
+                        rating.comment
+                    ].join(" ").toLowerCase();
+                    return text.includes(state.ratingSearch);
+                })
+                .sort((a, b) => String(b.ratingDate || "").localeCompare(String(a.ratingDate || "")));
+        }
+
+        function averageCustomerRating() {
+            if (!state.ratings.length) {
+                return 0;
+            }
+            const total = state.ratings.reduce((sum, rating) => sum + averageRatingFor(rating), 0);
+            return total / state.ratings.length;
+        }
+
+        function averageRatingFor(rating) {
+            return (Number(rating.employeeRating || 0) + Number(rating.qualityRating || 0)) / 2;
+        }
+
+        function starText(value) {
+            const rating = Math.max(0, Math.min(5, Math.round(Number(value || 0))));
+            return `${"★".repeat(rating)}${"☆".repeat(5 - rating)} ${Number(value || 0).toFixed(1)}`;
+        }
+
+        function chip(status = "Completed") {
+            const cls = status === "Completed" ? "" : status === "Scheduled" ? "info" : status === "Waiting Parts" ? "warn" : "danger";
+            return `<span class="chip ${cls}">${safe(status)}</span>`;
+        }
+
+        function availabilityChip(status = "Available") {
+            const cls = status === "Available"
+                ? ""
+                : status === "Busy"
+                    ? "warn"
+                    : status === "On Leave"
+                        ? "info"
+                        : "muted";
+            return `<span class="chip ${cls}">${safe(status)}</span>`;
+        }
+
+        function roleIcon(role = "") {
+            const icons = {
+                Mechanic: "wrench",
+                "Service Advisor": "messages-square",
+                Manager: "briefcase-business",
+                Electrician: "zap",
+                Cleaner: "sparkles",
+                Cashier: "receipt"
+            };
+            return icons[role] || "user-round-cog";
+        }
+
+        function employeeInitials(name = "") {
+            const parts = String(name).trim().split(/\s+/).filter(Boolean);
+            return (parts[0]?.[0] || "E").toUpperCase() + (parts[1]?.[0] || "").toUpperCase();
+        }
+
+        function setApiStatus(online) {
+            el.apiStatus.classList.toggle("online", online);
+            el.apiStatusText.textContent = online ? "API connected" : "Local demo mode";
+        }
+
+        function setDefaultDates() {
+            const today = new Date();
+            const next = new Date();
+            next.setMonth(next.getMonth() + 3);
+            const serviceDate = document.getElementById("serviceDate");
+            const nextServiceDate = document.getElementById("nextServiceDate");
+            if (serviceDate && !serviceDate.value) serviceDate.value = dateValue(today);
+            if (nextServiceDate && !nextServiceDate.value) nextServiceDate.value = dateValue(next);
+            const ratingDate = document.getElementById("ratingDate");
+            if (ratingDate && !ratingDate.value) ratingDate.value = dateValue(today);
+        }
+
+        function toast(message) {
+            el.toastMessage.textContent = message;
+            el.toast.classList.add("show");
+            clearTimeout(toast.timer);
+            toast.timer = setTimeout(() => el.toast.classList.remove("show"), 2800);
+            icons();
+        }
+
+        function emptyRow(colspan, message) {
+            return `
+                <tr>
+                    <td colspan="${colspan}">
+                        <div class="empty">
+                            <i data-lucide="database"></i>
+                            <strong>${safe(message)}</strong>
+                            <span>Use the forms or refresh data to update this table.</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function emptyBlock(title, text) {
+            return `<div class="empty"><i data-lucide="clipboard-list"></i><strong>${safe(title)}</strong><span>${safe(text)}</span></div>`;
+        }
+
+        function readLocal(key, fallback) {
+            try {
+                const saved = JSON.parse(localStorage.getItem(key));
+                return Array.isArray(saved) && saved.length ? saved : fallback;
+            } catch {
+                return fallback;
+            }
+        }
+
+        function saveLocal() {
+            localStorage.setItem(STORAGE.cars, JSON.stringify(state.cars));
+            localStorage.setItem(STORAGE.services, JSON.stringify(state.services));
+            localStorage.setItem(STORAGE.employees, JSON.stringify(state.employees));
+            localStorage.setItem(STORAGE.ratings, JSON.stringify(state.ratings));
+        }
+
+        function value(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function numberValue(id) {
+            const raw = value(id);
+            return raw === "" ? 0 : Number(raw);
+        }
+
+        function nextId(items) {
+            return items.reduce((max, item) => Math.max(max, Number(item.id || 0)), 0) + 1;
+        }
+
+        function dateValue(date) {
+            return date.toISOString().slice(0, 10);
+        }
+
+        function formatDate(value) {
+            if (!value) return "-";
+            const date = new Date(value + "T00:00:00");
+            if (Number.isNaN(date.getTime())) return value;
+            return new Intl.DateTimeFormat("en", { year: "numeric", month: "short", day: "2-digit" }).format(date);
+        }
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat("en").format(Number(value || 0));
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat("en-LK", {
+                style: "currency",
+                currency: "LKR",
+                maximumFractionDigits: 0
+            }).format(Number(value || 0));
+        }
+
+        function formatCompactCurrency(value) {
+            return new Intl.NumberFormat("en-LK", {
+                style: "currency",
+                currency: "LKR",
+                notation: "compact",
+                maximumFractionDigits: 1
+            }).format(Number(value || 0));
+        }
+
+        function titleCase(value) {
+            return String(value || "Staff").replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function safe(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function icons() {
+            if (window.lucide) lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
