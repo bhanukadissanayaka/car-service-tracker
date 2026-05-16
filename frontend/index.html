@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiceHub - Car Service Tracker</title>
+    <title>Car Service Tracker</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -13,11 +13,11 @@
             --muted: #657182;
             --line: #d9e0e7;
             --dark: #151d26;
-            --primary: #0f766e;
-            --primary-dark: #115e59;
-            --primary-soft: #d8f3ee;
-            --amber: #f59e0b;
-            --amber-soft: #fff2d6;
+            --primary: #ef1b13;
+            --primary-dark: #b90f08;
+            --primary-soft: #ffe0dc;
+            --amber: #ff9f1c;
+            --amber-soft: #fff0d4;
             --blue: #2563eb;
             --blue-soft: #dbeafe;
             --red: #dc2626;
@@ -61,27 +61,174 @@
         }
 
         .login-screen {
+            --front-primary: #ef1b13;
+            --front-accent: #ff9f1c;
+            --front-primary-rgb: 239, 27, 19;
+            --front-accent-rgb: 255, 159, 28;
+            --front-soft: #fff1e4;
             min-height: 100vh;
             display: grid;
-            grid-template-columns: minmax(320px, 1fr) minmax(360px, 0.95fr);
+            grid-template-columns: minmax(420px, 1.18fr) minmax(360px, 0.82fr);
             background: var(--dark);
         }
 
+        .login-screen.customer-mode {
+            --front-primary: #ef1b13;
+            --front-accent: #ff9f1c;
+            --front-primary-rgb: 239, 27, 19;
+            --front-accent-rgb: 255, 159, 28;
+            --front-soft: #fff1e4;
+        }
+
+        .login-screen.employee-mode {
+            --front-primary: #2563eb;
+            --front-accent: #38bdf8;
+            --front-primary-rgb: 37, 99, 235;
+            --front-accent-rgb: 56, 189, 248;
+            --front-soft: #e0f2fe;
+        }
+
         .login-visual {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
             min-height: 100vh;
             display: flex;
-            align-items: flex-end;
+            align-items: stretch;
             padding: 48px;
             color: white;
             background:
-                linear-gradient(180deg, rgba(12, 17, 23, 0.12), rgba(12, 17, 23, 0.86)),
-                url("https://images.unsplash.com/photo-1632823469850-1b7b1e8b7e1e?auto=format&fit=crop&w=1800&q=80");
+                linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.08) 54%, rgba(0, 0, 0, 0.02)),
+                url("assets/customer-car.png");
             background-size: cover;
-            background-position: center;
+            background-position: center right;
+            transition: background-image 0.25s ease;
+        }
+
+        .login-visual::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(var(--front-primary-rgb), 0.4), transparent 30%),
+                radial-gradient(circle at 78% 18%, rgba(var(--front-accent-rgb), 0.28), transparent 24%),
+                linear-gradient(118deg, transparent 0 60%, rgba(var(--front-accent-rgb), 0.26) 60% 64%, transparent 64% 69%, rgba(var(--front-primary-rgb), 0.22) 69% 73%, transparent 73%),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 20px);
+            mix-blend-mode: screen;
+            opacity: 0.72;
+        }
+
+        .login-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0.38) 42%, rgba(0, 0, 0, 0.08) 72%),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.46));
+        }
+
+        .login-screen.customer-mode .login-visual {
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.08) 54%, rgba(0, 0, 0, 0.02)),
+                url("assets/customer-car.png");
+            background-size: cover;
+            background-position: center right;
+        }
+
+        .login-screen.employee-mode .login-visual {
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.22) 48%, rgba(0, 0, 0, 0.08)),
+                url("assets/employee-mechanic.png");
+            background-size: cover;
+            background-position: center right;
         }
 
         .login-copy {
-            max-width: 650px;
+            position: relative;
+            z-index: 1;
+            width: min(100%, 760px);
+            min-height: calc(100vh - 96px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 36px;
+        }
+
+        .front-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 16px;
+            border: 1px solid rgba(var(--front-accent-rgb), 0.34);
+            border-radius: var(--radius);
+            background: rgba(8, 8, 8, 0.42);
+            backdrop-filter: blur(14px);
+        }
+
+        .front-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .front-tab {
+            padding: 8px 10px;
+            border-radius: var(--radius);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.78);
+            font-weight: 900;
+        }
+
+        .front-tab:hover,
+        .front-tab.active {
+            background: rgba(var(--front-primary-rgb), 0.18);
+            color: white;
+            box-shadow: inset 0 -2px 0 var(--front-accent);
+        }
+
+        .front-menu {
+            width: 38px;
+            height: 38px;
+            display: none;
+            place-items: center;
+            border: 1px solid rgba(var(--front-accent-rgb), 0.34);
+            border-radius: var(--radius);
+            background: rgba(var(--front-primary-rgb), 0.18);
+        }
+
+        .hero-block {
+            display: grid;
+            gap: 18px;
+            max-width: 680px;
+        }
+
+        .eyebrow {
+            width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(var(--front-accent-rgb), 0.48);
+            border-radius: var(--radius);
+            background: rgba(var(--front-primary-rgb), 0.22);
+            color: var(--front-soft);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .hero-accent {
+            width: min(100%, 360px);
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--front-primary), var(--front-accent), rgba(255, 255, 255, 0));
         }
 
         .brand {
@@ -103,9 +250,9 @@
         }
 
         .brand-icon {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--front-primary), var(--front-accent));
             color: white;
-            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.28);
+            box-shadow: 0 12px 32px rgba(var(--front-primary-rgb), 0.3);
         }
 
         .brand-text {
@@ -125,49 +272,106 @@
         }
 
         .login-copy h1 {
-            margin: 34px 0 14px;
-            font-size: 44px;
-            line-height: 1.08;
+            margin: 0;
+            max-width: 680px;
+            font-size: clamp(42px, 5vw, 68px);
+            line-height: 1.02;
         }
 
         .login-copy p {
             margin: 0;
-            max-width: 560px;
+            max-width: 650px;
             color: rgba(255, 255, 255, 0.78);
             line-height: 1.7;
         }
 
-        .visual-stats {
+        .about-panel {
+            display: grid;
+            gap: 16px;
+            max-width: 760px;
+            padding: 18px;
+            border: 1px solid rgba(var(--front-accent-rgb), 0.38);
+            border-radius: var(--radius);
+            background:
+                linear-gradient(135deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.22)),
+                linear-gradient(90deg, rgba(var(--front-primary-rgb), 0.18), rgba(var(--front-accent-rgb), 0.12));
+            backdrop-filter: blur(14px);
+        }
+
+        .about-panel h2 {
+            margin: 0;
+            max-width: 600px;
+            font-size: 26px;
+        }
+
+        .section-label {
+            color: var(--front-accent);
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .about-features {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-            margin-top: 28px;
+            gap: 10px;
         }
 
-        .visual-stat {
-            padding: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius);
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(8px);
+        .about-feature {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 10px;
+            align-items: start;
+            padding-top: 10px;
+            border-top: 2px solid rgba(var(--front-primary-rgb), 0.86);
         }
 
-        .visual-stat strong {
+        .about-feature svg {
+            width: 20px;
+            height: 20px;
+            color: var(--front-accent);
+        }
+
+        .about-feature strong,
+        .about-feature span {
             display: block;
-            font-size: 22px;
+            min-width: 0;
         }
 
-        .visual-stat span {
-            color: rgba(255, 255, 255, 0.72);
+        .about-feature strong {
+            color: white;
+            font-size: 14px;
+        }
+
+        .about-feature span {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.68);
             font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .about-feature a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .about-feature a:hover {
+            color: var(--front-accent);
         }
 
         .login-panel {
+            position: relative;
+            overflow: hidden;
             min-height: 100vh;
             display: grid;
             place-items: center;
             padding: 32px;
-            background: #f8fafc;
+            background:
+                radial-gradient(circle at 78% 10%, rgba(var(--front-accent-rgb), 0.22), transparent 25%),
+                radial-gradient(circle at 18% 86%, rgba(var(--front-primary-rgb), 0.18), transparent 24%),
+                repeating-linear-gradient(135deg, rgba(var(--front-accent-rgb), 0.08) 0 1px, transparent 1px 18px),
+                #0c0c0d;
         }
 
         .login-card,
@@ -179,20 +383,31 @@
         }
 
         .login-card {
-            width: min(100%, 460px);
+            width: min(100%, 500px);
             padding: 28px;
-            box-shadow: var(--shadow);
+            color: white;
+            background:
+                linear-gradient(135deg, rgba(18, 18, 18, 0.86), rgba(34, 20, 12, 0.78)),
+                rgba(0, 0, 0, 0.72);
+            border-color: rgba(var(--front-accent-rgb), 0.24);
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.42);
+            backdrop-filter: blur(18px);
         }
 
         .login-card h2 {
             margin: 22px 0 8px;
             font-size: 26px;
+            color: white;
         }
 
         .login-card p {
             margin: 0 0 20px;
-            color: var(--muted);
+            color: rgba(255, 255, 255, 0.68);
             line-height: 1.5;
+        }
+
+        .login-card label {
+            color: rgba(255, 255, 255, 0.86);
         }
 
         .role-switch {
@@ -211,15 +426,15 @@
             padding: 12px;
             border: 1px solid var(--line);
             border-radius: var(--radius);
-            background: #f8fafc;
-            color: var(--ink);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
             text-align: left;
         }
 
         .role-option svg {
             width: 20px;
             height: 20px;
-            color: var(--primary);
+            color: var(--front-accent);
         }
 
         .role-option strong,
@@ -232,15 +447,15 @@
 
         .role-option span {
             margin-top: 3px;
-            color: var(--muted);
+            color: rgba(255, 255, 255, 0.62);
             font-size: 12px;
             font-weight: 700;
         }
 
         .role-option.active {
-            border-color: var(--primary);
-            background: var(--primary-soft);
-            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+            border-color: var(--front-primary);
+            background: linear-gradient(135deg, rgba(var(--front-primary-rgb), 0.2), rgba(var(--front-accent-rgb), 0.12));
+            box-shadow: 0 0 0 4px rgba(var(--front-primary-rgb), 0.16);
         }
 
         .form-grid {
@@ -267,15 +482,14 @@
             overflow: hidden;
             display: flex;
             align-items: flex-end;
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 159, 28, 0.38);
             border-radius: var(--radius);
             background:
-                linear-gradient(180deg, rgba(13, 19, 25, 0.22), rgba(13, 19, 25, 0.92)),
-                url("https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1400&q=80");
-            background-size: cover;
-            background-position: center;
+                linear-gradient(135deg, rgba(18, 18, 20, 0.58), rgba(42, 24, 10, 0.34)),
+                rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(18px);
             color: white;
-            box-shadow: var(--shadow);
+            box-shadow: 0 24px 58px rgba(0, 0, 0, 0.24);
         }
 
         .car-preview::after {
@@ -283,21 +497,23 @@
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(180deg, rgba(9, 13, 18, 0.04), rgba(9, 13, 18, 0.84)),
-                linear-gradient(90deg, rgba(9, 13, 18, 0.72), rgba(9, 13, 18, 0.06));
+                linear-gradient(115deg, rgba(239, 27, 19, 0.16), transparent 40%, rgba(255, 159, 28, 0.12)),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 20px);
             z-index: 1;
+            pointer-events: none;
         }
 
         .preview-image {
             position: absolute;
             left: 50%;
-            top: 42%;
-            width: min(96%, 680px);
-            height: 56%;
+            top: 27%;
+            z-index: 1;
+            width: min(92%, 540px);
+            height: 42%;
             object-fit: contain;
-            opacity: 0.96;
+            opacity: 0.98;
             transform: translate(-50%, -50%) scale(1);
-            filter: drop-shadow(0 30px 44px rgba(0, 0, 0, 0.55));
+            filter: drop-shadow(0 28px 40px rgba(0, 0, 0, 0.56));
             transition: opacity 0.25s ease, transform 0.35s ease, filter 0.25s ease;
         }
 
@@ -310,10 +526,15 @@
         .preview-content {
             position: relative;
             z-index: 2;
-            width: 100%;
+            width: calc(100% - 36px);
             display: grid;
             gap: 16px;
-            padding: 22px;
+            margin: 18px;
+            padding: 18px;
+            border: 1px solid rgba(255, 159, 28, 0.28);
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.42), rgba(28, 18, 10, 0.28));
+            backdrop-filter: blur(16px);
         }
 
         .preview-badge {
@@ -322,10 +543,10 @@
             align-items: center;
             gap: 8px;
             padding: 8px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.24);
+            border: 1px solid rgba(255, 159, 28, 0.38);
             border-radius: var(--radius);
-            background: rgba(255, 255, 255, 0.14);
-            color: rgba(255, 255, 255, 0.9);
+            background: rgba(239, 27, 19, 0.2);
+            color: rgba(255, 255, 255, 0.94);
             font-size: 12px;
             font-weight: 800;
             backdrop-filter: blur(8px);
@@ -360,9 +581,9 @@
             display: grid;
             gap: 4px;
             padding: 11px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 159, 28, 0.24);
             border-radius: var(--radius);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
         }
 
@@ -389,9 +610,9 @@
         }
 
         .preview-actions .btn.secondary {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-color: rgba(255, 255, 255, 0.24);
+            border-color: rgba(255, 159, 28, 0.34);
         }
 
         .preview-image-state {
@@ -481,6 +702,44 @@
             color: var(--ink);
         }
 
+        .login-card input {
+            border-color: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .login-card input::placeholder {
+            color: rgba(255, 255, 255, 0.48);
+        }
+
+        .login-card .input svg,
+        .login-card .input .icon {
+            color: var(--front-accent);
+        }
+
+        .login-card .password-toggle {
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .login-card .password-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .login-card .btn.secondary {
+            border-color: rgba(var(--front-accent-rgb), 0.32);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .login-screen .btn.primary {
+            background: linear-gradient(135deg, var(--front-primary), var(--front-accent));
+        }
+
+        .login-screen .btn.primary:hover {
+            background: linear-gradient(135deg, var(--front-accent), var(--front-primary));
+        }
+
         .actions,
         .toolbar {
             display: flex;
@@ -551,6 +810,52 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+        }
+
+        .app.employee-mode {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-soft: #dbeafe;
+            --amber: #38bdf8;
+            --amber-soft: #e0f2fe;
+            --red: #2563eb;
+            --red-soft: #dbeafe;
+            background:
+                linear-gradient(120deg, rgba(239, 246, 255, 0.96), rgba(224, 242, 254, 0.86)),
+                url("assets/employee-mechanic.png");
+            background-size: cover;
+            background-position: center right;
+            background-attachment: fixed;
+        }
+
+        .app.employee-mode .sidebar {
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(8, 47, 73, 0.92)),
+                #0f172a;
+        }
+
+        .app.employee-mode .nav button.active {
+            background: rgba(37, 99, 235, 0.2);
+            box-shadow: inset 3px 0 0 var(--amber);
+        }
+
+        .app.employee-mode .topbar {
+            background: rgba(239, 246, 255, 0.92);
+        }
+
+        .app.employee-mode .panel,
+        .app.employee-mode .employee-card,
+        .app.employee-mode .stat-card {
+            border-color: rgba(37, 99, 235, 0.18);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.08);
+        }
+
+        .app.employee-mode .btn.primary {
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+        }
+
+        .app.employee-mode .btn.primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #0284c7);
         }
 
         .sidebar {
@@ -1047,6 +1352,16 @@
             border-radius: var(--radius);
         }
 
+        .car-thumb {
+            width: 78px;
+            height: 48px;
+            display: block;
+            object-fit: cover;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+        }
+
         table {
             width: 100%;
             min-width: 760px;
@@ -1145,8 +1460,20 @@
             }
 
             .login-visual {
-                min-height: 360px;
+                min-height: auto;
                 padding: 28px;
+            }
+
+            .login-copy {
+                min-height: auto;
+            }
+
+            .front-links {
+                display: none;
+            }
+
+            .front-menu {
+                display: grid;
             }
 
             .login-panel {
@@ -1198,7 +1525,7 @@
                 font-size: 34px;
             }
 
-            .visual-stats,
+            .about-features,
             .role-switch,
             .stats,
             .dashboard-grid,
@@ -1244,22 +1571,37 @@
     </style>
 </head>
 <body>
-    <section id="loginScreen" class="login-screen">
+    <section id="loginScreen" class="login-screen customer-mode">
         <div class="login-visual">
             <div class="login-copy">
-                <div class="brand">
-                    <span class="brand-icon"><i data-lucide="car-front"></i></span>
-                    <span class="brand-text">
-                        <strong>ServiceHub</strong>
-                        <span>Vehicle care console</span>
-                    </span>
+                <div class="front-nav">
+                    <div class="brand">
+                        <span class="brand-icon"><i data-lucide="car-front"></i></span>
+                        <span class="brand-text">
+                            <strong>ServiceDesk</strong>
+                            <span>Vehicle care console</span>
+                        </span>
+                    </div>
+                    <div class="front-links">
+                        <button class="front-tab active" type="button" data-front-tab="about">About</button>
+                        <button class="front-tab" type="button" data-front-tab="services">Services</button>
+                        <button class="front-tab" type="button" data-front-tab="support">Support</button>
+                    </div>
+                    <span class="front-menu"><i data-lucide="menu"></i></span>
                 </div>
-                <h1>Car service records with a cleaner, faster workshop dashboard.</h1>
-                <p>Track owners, vehicles, service cost, mileage, status, and next service dates from one interactive screen.</p>
-                <div class="visual-stats">
-                    <div class="visual-stat"><strong>Live</strong><span>Car records</span></div>
-                    <div class="visual-stat"><strong>Fast</strong><span>History lookup</span></div>
-                    <div class="visual-stat"><strong>Smart</strong><span>Service queue</span></div>
+
+                <div class="hero-block">
+                    <span class="eyebrow"><i data-lucide="sparkles"></i> Premium Garage Care</span>
+                    <h1>Vehicle service made clear for customers and workshop teams.</h1>
+                    <div class="hero-accent"></div>
+                    <p>ServiceDesk connects car owners, service advisors, and mechanics in one clean workspace for bookings, vehicle profiles, repair notes, ratings, and daily maintenance work.</p>
+                </div>
+
+                <div class="about-panel">
+                    <span id="frontPanelLabel" class="section-label">About Us</span>
+                    <h2 id="frontPanelTitle">We help garages deliver organized, transparent, and trusted vehicle care.</h2>
+                    <p id="frontPanelText">Our tracker keeps every car, customer, employee, cost, and repair problem visible from the first service request to the final completed job.</p>
+                    <div id="frontPanelFeatures" class="about-features"></div>
                 </div>
             </div>
         </div>
@@ -1269,8 +1611,8 @@
                 <div class="brand">
                     <span class="brand-icon"><i data-lucide="shield-check"></i></span>
                     <span class="brand-text">
-                        <strong style="color: var(--ink);">Account Login</strong>
-                        <span style="color: var(--muted);">Choose your portal</span>
+                        <strong style="color: white;">Account Login</strong>
+                        <span style="color: rgba(255, 255, 255, 0.64);">Choose your portal</span>
                     </span>
                 </div>
                 <h2>Welcome back</h2>
@@ -1454,6 +1796,10 @@
                                     <label for="quickNote">Internal Note</label>
                                     <div class="input"><i class="icon" data-lucide="sticky-note"></i><input id="quickNote" type="text" placeholder="Optional note"></div>
                                 </div>
+                                <div class="field span-2">
+                                    <label for="carImage">Car Image</label>
+                                    <div class="input"><i class="icon" data-lucide="image-plus"></i><input id="carImage" type="file" accept="image/*"></div>
+                                </div>
                                 <div class="actions span-2">
                                     <button class="btn primary" type="submit"><i data-lucide="save"></i>Add Car</button>
                                     <button class="btn secondary" type="reset"><i data-lucide="rotate-ccw"></i>Clear</button>
@@ -1500,6 +1846,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Image</th>
                                         <th>Plate</th>
                                         <th>Owner</th>
                                         <th>Contact</th>
@@ -2198,6 +2545,7 @@
             services: [],
             employees: [],
             ratings: [],
+            frontTab: "about",
             selectedHistoryCarId: "",
             carSearch: "",
             employeeSearch: "",
@@ -2208,11 +2556,44 @@
             previewKey: "",
             previewTimer: 0,
             previewToken: 0,
+            uploadedCarImage: "",
             localImageFiles: [],
             localImageUrls: new Map()
         };
 
         const el = {};
+        const frontTabs = {
+            about: {
+                label: "About Us",
+                title: "We help garages deliver organized, transparent, and trusted vehicle care.",
+                text: "Our tracker keeps every car, customer, employee, cost, and repair problem visible from the first service request to the final completed job.",
+                features: [
+                    ["image-plus", "Visual car profiles", "Upload real car images with customer vehicle records."],
+                    ["clipboard-check", "Clear repair flow", "Employees see the car, problem, mileage, and current job status."],
+                    ["star", "Quality feedback", "Customers can rate employees and service quality after work."]
+                ]
+            },
+            services: {
+                label: "Our Services",
+                title: "Everything a modern service desk needs in one clean system.",
+                text: "ServiceDesk supports common workshop work, employee availability, payable service prices, and full customer maintenance history.",
+                features: [
+                    ["settings", "Engine service", "Oil changes, inspections, full service, and repair notes."],
+                    ["zap", "Electrical repair", "Battery work, diagnostics, and electrical job tracking."],
+                    ["car-front", "Body and tire work", "Tire changes, brake repair, body checks, and follow-up dates."]
+                ]
+            },
+            support: {
+                label: "Support",
+                title: "Need help with a booking, employee portal, or service record?",
+                text: "Contact the ServiceDesk support team using the details below. These are demo contact details for this frontend project.",
+                features: [
+                    ["mail", "Email", `<a href="mailto:servicedesk@email.com">servicedesk@email.com</a>`],
+                    ["phone", "Phone", `<a href="tel:+94771234567">+94 77 123 4567</a>`],
+                    ["map-pin", "Workshop", "ServiceDesk Auto Care, Colombo 03"]
+                ]
+            }
+        };
 
         document.addEventListener("DOMContentLoaded", () => {
             cacheElements();
@@ -2220,6 +2601,7 @@
             setDefaultDates();
             renderBrandSuggestions();
             renderModelSuggestions();
+            renderFrontTab(state.frontTab);
             initSession();
             updateCarPreview(true);
             icons();
@@ -2229,6 +2611,7 @@
             [
                 "loginScreen", "appShell", "loginForm", "loginEmail", "loginPassword", "passwordToggle",
                 "demoLogin", "sidebar", "menuBtn", "logoutBtn", "refreshAll", "refreshCars",
+                "frontPanelLabel", "frontPanelTitle", "frontPanelText", "frontPanelFeatures",
                 "apiStatus", "apiStatusText", "pageTitle", "pageSubtitle", "sessionName",
                 "sessionEmail", "avatar", "carForm", "serviceForm", "carTable", "carSelect",
                 "historyCarSelect", "historyStatusFilter", "viewHistory", "serviceTable",
@@ -2241,7 +2624,7 @@
                 "ratingCustomerName", "employeeRating", "qualityRating", "ratingDate", "ratingComment",
                 "carSearch", "serviceChart", "upcomingList", "toast", "toastMessage",
                 "statCars", "statServices", "statRevenue", "statUpcoming", "statEmployees", "statRating", "recentRatings", "brand", "model",
-                "year", "mileage", "carPreview", "carPreviewImage", "previewTitle",
+                "year", "mileage", "carImage", "carPreview", "carPreviewImage", "previewTitle",
                 "previewText", "previewBrand", "previewModel", "previewYear",
                 "previewMileage", "mappedPreviewLink", "previewImageState", "brandOptions",
                 "modelOptions"
@@ -2255,6 +2638,9 @@
             document.querySelectorAll(".role-option").forEach(button => {
                 button.addEventListener("click", () => selectLoginRole(button.dataset.role));
             });
+            document.querySelectorAll("[data-front-tab]").forEach(button => {
+                button.addEventListener("click", () => renderFrontTab(button.dataset.frontTab));
+            });
             el.logoutBtn.addEventListener("click", logout);
             el.menuBtn.addEventListener("click", () => el.sidebar.classList.toggle("open"));
             el.refreshAll.addEventListener("click", () => loadCars(true));
@@ -2263,6 +2649,7 @@
             el.employeeForm.addEventListener("submit", addEmployee);
             el.ratingForm.addEventListener("submit", addRating);
             el.carForm.addEventListener("reset", () => setTimeout(() => {
+                state.uploadedCarImage = "";
                 renderModelSuggestions();
                 updateCarPreview(true);
             }, 0));
@@ -2274,6 +2661,7 @@
             ["brand", "model", "year", "mileage"].forEach(id => {
                 el[id].addEventListener("input", () => scheduleCarPreview());
             });
+            el.carImage.addEventListener("change", handleCarImageUpload);
             el.brand.addEventListener("input", renderModelSuggestions);
             el.carSearch.addEventListener("input", event => {
                 state.carSearch = event.target.value.trim().toLowerCase();
@@ -2303,7 +2691,28 @@
             });
         }
 
+        function renderFrontTab(tab = "about") {
+            const content = frontTabs[tab] || frontTabs.about;
+            state.frontTab = tab;
+
+            document.querySelectorAll("[data-front-tab]").forEach(button => {
+                button.classList.toggle("active", button.dataset.frontTab === tab);
+            });
+
+            el.frontPanelLabel.textContent = content.label;
+            el.frontPanelTitle.textContent = content.title;
+            el.frontPanelText.textContent = content.text;
+            el.frontPanelFeatures.innerHTML = content.features.map(([icon, title, text]) => `
+                <div class="about-feature">
+                    <i data-lucide="${safe(icon)}"></i>
+                    <span><strong>${safe(title)}</strong><span>${text}</span></span>
+                </div>
+            `).join("");
+            icons();
+        }
+
         function initSession() {
+            selectLoginRole(state.userRole || "customer");
             if (getSession()) {
                 openApp();
             } else {
@@ -2331,6 +2740,9 @@
             el.loginPassword.value = "service123";
             saveSession(el.loginEmail.value, state.userRole);
             openApp();
+            if (state.userRole === "customer") {
+                navigate("addCarPage");
+            }
         }
 
         function selectLoginRole(role) {
@@ -2338,6 +2750,19 @@
             document.querySelectorAll(".role-option").forEach(button => {
                 button.classList.toggle("active", button.dataset.role === state.userRole);
             });
+            el.loginScreen.classList.remove("customer-mode", "employee-mode");
+            el.loginScreen.classList.add(`${state.userRole}-mode`);
+
+            const title = document.querySelector(".login-copy h1");
+            const text = document.querySelector(".login-copy p");
+            if (state.userRole === "employee") {
+                title.textContent = "Daily workshop work made clear for every employee.";
+                text.textContent = "Track active jobs, customer problems, vehicle details, service progress, and completed work from one focused employee portal.";
+            } else {
+                title.textContent = "Vehicle service made clear for customers and workshop teams.";
+                text.textContent = "Add cars with images, request service, review history, rate quality, and connect with available workshop staff.";
+            }
+            icons();
         }
 
         function saveSession(email, role = "customer") {
@@ -2365,6 +2790,8 @@
             el.avatar.textContent = session.email.charAt(0).toUpperCase();
             el.loginScreen.classList.add("hidden");
             el.appShell.classList.remove("hidden");
+            el.appShell.classList.remove("customer-mode", "employee-mode");
+            el.appShell.classList.add(`${state.userRole}-mode`);
             loadEmployees();
             configureRoleAccess();
             navigate(ROLE_HOME[state.userRole] || "dashboardPage");
@@ -2374,6 +2801,7 @@
         function logout() {
             localStorage.removeItem(STORAGE.session);
             el.appShell.classList.add("hidden");
+            el.appShell.classList.remove("customer-mode", "employee-mode");
             el.loginScreen.classList.remove("hidden");
             toast("Logged out successfully.");
         }
@@ -2424,6 +2852,54 @@
                 .join("");
         }
 
+        async function handleCarImageUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) {
+                state.uploadedCarImage = "";
+                updateCarPreview(true);
+                return;
+            }
+
+            if (!file.type.startsWith("image/")) {
+                event.target.value = "";
+                toast("Please choose an image file.");
+                return;
+            }
+
+            try {
+                state.uploadedCarImage = await imageFileToDataUrl(file);
+                updateCarPreview(true);
+                toast("Car image added to preview.");
+            } catch {
+                state.uploadedCarImage = "";
+                event.target.value = "";
+                toast("Could not load that image.");
+            }
+        }
+
+        function imageFileToDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = reject;
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onerror = reject;
+                    image.onload = () => {
+                        const maxSize = 1200;
+                        const scale = Math.min(1, maxSize / image.width, maxSize / image.height);
+                        const canvas = document.createElement("canvas");
+                        canvas.width = Math.max(1, Math.round(image.width * scale));
+                        canvas.height = Math.max(1, Math.round(image.height * scale));
+                        const context = canvas.getContext("2d");
+                        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL("image/jpeg", 0.82));
+                    };
+                    image.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         function loadLocalImageFolder(event) {
             state.localImageUrls.forEach(url => URL.revokeObjectURL(url));
             state.localImageUrls.clear();
@@ -2464,6 +2940,18 @@
             ].join(" ").toLowerCase();
 
             updateCarPreviewText(preview);
+
+            if (state.uploadedCarImage) {
+                state.previewKey = `uploaded-${displayName}-${year}`;
+                state.previewToken += 1;
+                el.carPreview.classList.remove("is-loading");
+                el.carPreviewImage.src = state.uploadedCarImage;
+                el.carPreviewImage.alt = `${displayName || "Uploaded car"} preview`;
+                el.mappedPreviewLink.href = state.uploadedCarImage;
+                el.mappedPreviewLink.classList.remove("hidden");
+                el.previewImageState.textContent = "Uploaded image ready";
+                return;
+            }
 
             if (!displayName) {
                 state.previewKey = "";
@@ -2511,7 +2999,9 @@
             const displayName = [brand, model].filter(Boolean).join(" ").trim();
 
             el.previewTitle.textContent = preview ? preview.name : (displayName || "Enter brand and model");
-            el.previewText.textContent = preview
+            el.previewText.textContent = state.uploadedCarImage
+                ? "Uploaded car image selected. It will be saved with this vehicle."
+                : preview
                 ? "Matching car preview loaded."
                 : displayName
                     ? "No exact image mapping found. Add this brand and model to LOCAL_CAR_IMAGE_MAP."
@@ -2798,7 +3288,8 @@
                 model: value("model"),
                 year: numberValue("year"),
                 mileage: numberValue("mileage"),
-                note: value("quickNote")
+                note: value("quickNote"),
+                imageUrl: state.uploadedCarImage
             };
 
             try {
@@ -2809,6 +3300,7 @@
                 });
                 if (!response.ok) throw new Error("Save failed");
                 toast("Car added successfully.");
+                state.uploadedCarImage = "";
                 el.carForm.reset();
                 updateCarPreview(true);
                 await loadCars();
@@ -2816,6 +3308,7 @@
                 state.cars.push({ id: nextId(state.cars), ...car });
                 saveLocal();
                 renderAll();
+                state.uploadedCarImage = "";
                 el.carForm.reset();
                 updateCarPreview(true);
                 toast("Car saved in local demo mode.");
@@ -2967,6 +3460,7 @@
             el.carTable.innerHTML = cars.length ? cars.map(car => `
                 <tr>
                     <td>${safe(car.id)}</td>
+                    <td>${car.imageUrl ? `<img class="car-thumb" src="${safe(car.imageUrl)}" alt="${safe(car.plateNumber)} image">` : `<span class="chip muted">No image</span>`}</td>
                     <td><strong>${safe(car.plateNumber)}</strong></td>
                     <td>${safe(car.ownerName)}</td>
                     <td>${safe(car.ownerContact || "-")}</td>
@@ -2975,7 +3469,7 @@
                     <td>${safe(car.year || "-")}</td>
                     <td>${formatNumber(car.mileage)}</td>
                 </tr>
-            `).join("") : emptyRow(8, "No cars match the current search.");
+            `).join("") : emptyRow(9, "No cars match the current search.");
         }
 
         function renderEmployees() {
