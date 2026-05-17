@@ -410,6 +410,54 @@
             color: rgba(255, 255, 255, 0.86);
         }
 
+
+        .auth-switch {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin: 18px 0 6px;
+        }
+
+        .auth-tab {
+            min-height: 40px;
+            border: 1px solid rgba(var(--front-accent-rgb), 0.26);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 900;
+        }
+
+        .auth-tab.active,
+        .auth-tab:hover {
+            background: linear-gradient(135deg, rgba(var(--front-primary-rgb), 0.24), rgba(var(--front-accent-rgb), 0.12));
+            color: white;
+            border-color: var(--front-primary);
+        }
+
+        .auth-section {
+            display: none;
+        }
+
+        .auth-section.active {
+            display: grid;
+            gap: 14px;
+        }
+
+        .register-fields {
+            display: grid;
+            gap: 14px;
+        }
+
+        .register-employee-extra {
+            display: none;
+        }
+
+        .login-screen.employee-mode .register-employee-extra {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
         .role-switch {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1615,43 +1663,128 @@
                         <span style="color: rgba(255, 255, 255, 0.64);">Choose your portal</span>
                     </span>
                 </div>
-                <h2>Welcome back</h2>
-                <p>Select whether you are a customer or employee, then login to open the correct workspace.</p>
+                <h2 id="authTitle">Welcome back</h2>
+                <p id="authSubtitle">Select customer or employee, then login using saved MySQL account details.</p>
+
+                <div class="auth-switch" aria-label="Choose login or register">
+                    <button id="authLoginTab" class="auth-tab active" type="button">Login</button>
+                    <button id="authRegisterTab" class="auth-tab" type="button">Register</button>
+                </div>
 
                 <div class="role-switch" aria-label="Choose login type">
                     <button class="role-option active" type="button" data-role="customer">
                         <i data-lucide="user-round"></i>
                         <span><strong>Customer</strong><span>Service, cars, ratings</span></span>
                     </button>
+
                     <button class="role-option" type="button" data-role="employee">
                         <i data-lucide="id-card"></i>
                         <span><strong>Employee</strong><span>Staff profile, work details</span></span>
                     </button>
                 </div>
 
-                <div class="form-grid one">
-                    <div class="field">
-                        <label for="loginEmail">Email</label>
-                        <div class="input">
-                            <i class="icon" data-lucide="mail"></i>
-                            <input id="loginEmail" type="email" placeholder="staff@garage.com" autocomplete="email" required>
+                <div id="loginFields" class="auth-section active">
+                    <div class="form-grid one">
+                        <div class="field">
+                            <label for="loginEmail">Email</label>
+                            <div class="input">
+                                <i class="icon" data-lucide="mail"></i>
+                                <input id="loginEmail" type="email" placeholder="bhanuka@gmail.com" autocomplete="email" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="loginPassword">Password</label>
+                            <div class="input">
+                                <i class="icon" data-lucide="lock-keyhole"></i>
+                                <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required>
+                                <button id="passwordToggle" class="password-toggle" type="button" title="Show password">
+                                    <i data-lucide="eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="field">
-                        <label for="loginPassword">Password</label>
-                        <div class="input">
-                            <i class="icon" data-lucide="lock-keyhole"></i>
-                            <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required>
-                            <button id="passwordToggle" class="password-toggle" type="button" title="Show password">
-                                <i data-lucide="eye"></i>
-                            </button>
-                        </div>
+
+                    <div class="actions">
+                        <button id="loginButton" class="btn primary" type="submit">
+                            <i data-lucide="log-in"></i>
+                            Login
+                        </button>
+                        <button id="demoLogin" class="btn secondary" type="button">
+                            <i data-lucide="sparkles"></i>
+                            Demo account
+                        </button>
                     </div>
                 </div>
 
-                <div class="actions">
-                    <button class="btn primary" type="submit"><i data-lucide="log-in"></i>Login</button>
-                    <button id="demoLogin" class="btn secondary" type="button"><i data-lucide="sparkles"></i>Demo account</button>
+                <div id="registerFields" class="auth-section">
+                    <div class="form-grid one">
+                        <div class="field">
+                            <label for="registerName">Full Name</label>
+                            <div class="input"><i class="icon" data-lucide="user"></i><input id="registerName" type="text" placeholder="Full name"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerEmail">Email</label>
+                            <div class="input"><i class="icon" data-lucide="mail"></i><input id="registerEmail" type="email" placeholder="email@example.com"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerPhone">Phone Number</label>
+                            <div class="input"><i class="icon" data-lucide="phone"></i><input id="registerPhone" type="text" placeholder="0771234567"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerPassword">Password</label>
+                            <div class="input"><i class="icon" data-lucide="lock-keyhole"></i><input id="registerPassword" type="password" placeholder="Minimum 4 characters"></div>
+                        </div>
+                        <div class="field" id="customerAddressField">
+                            <label for="registerAddress">Address</label>
+                            <div class="input"><i class="icon" data-lucide="map-pin"></i><input id="registerAddress" type="text" placeholder="Address"></div>
+                        </div>
+                    </div>
+
+                    <div class="register-employee-extra">
+                        <div class="field">
+                            <label for="registerRole">Role</label>
+                            <div class="input"><i class="icon" data-lucide="briefcase-business"></i><input id="registerRole" type="text" placeholder="Mechanic"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerAvailability">Availability</label>
+                            <div class="input"><i class="icon" data-lucide="calendar-check"></i><input id="registerAvailability" type="text" placeholder="Available"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerSalary">Salary</label>
+                            <div class="input"><i class="icon" data-lucide="wallet"></i><input id="registerSalary" type="number" placeholder="85000"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerExperienceYears">Experience Years</label>
+                            <div class="input"><i class="icon" data-lucide="medal"></i><input id="registerExperienceYears" type="number" placeholder="5"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerServiceType">Service Type</label>
+                            <div class="input"><i class="icon" data-lucide="settings"></i><input id="registerServiceType" type="text" placeholder="Full Service"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerPayableAmount">Payable Amount</label>
+                            <div class="input"><i class="icon" data-lucide="badge-dollar-sign"></i><input id="registerPayableAmount" type="number" placeholder="2500"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerCarBrandSpecialty">Car Brand Specialty</label>
+                            <div class="input"><i class="icon" data-lucide="car-front"></i><input id="registerCarBrandSpecialty" type="text" placeholder="Toyota, Honda"></div>
+                        </div>
+                        <div class="field">
+                            <label for="registerShift">Shift</label>
+                            <div class="input"><i class="icon" data-lucide="clock"></i><input id="registerShift" type="text" placeholder="Morning"></div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button id="registerButton" class="btn primary" type="button">
+                            <i data-lucide="user-plus"></i>
+                            Create Account
+                        </button>
+                        <button id="backToLogin" class="btn secondary" type="button">
+                            <i data-lucide="log-in"></i>
+                            Back to Login
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -2609,8 +2742,11 @@
 
         function cacheElements() {
             [
-                "loginScreen", "appShell", "loginForm", "loginEmail", "loginPassword", "passwordToggle",
-                "demoLogin", "sidebar", "menuBtn", "logoutBtn", "refreshAll", "refreshCars",
+                "loginScreen", "appShell", "loginForm", "authTitle", "authSubtitle", "authLoginTab", "authRegisterTab", "loginFields", "registerFields",
+                "loginEmail", "loginPassword", "passwordToggle", "demoLogin", "loginButton", "registerButton", "backToLogin",
+                "registerName", "registerEmail", "registerPhone", "registerPassword", "registerAddress", "customerAddressField",
+                "registerRole", "registerAvailability", "registerSalary", "registerExperienceYears", "registerServiceType", "registerPayableAmount", "registerCarBrandSpecialty", "registerShift",
+                "sidebar", "menuBtn", "logoutBtn", "refreshAll", "refreshCars",
                 "frontPanelLabel", "frontPanelTitle", "frontPanelText", "frontPanelFeatures",
                 "apiStatus", "apiStatusText", "pageTitle", "pageSubtitle", "sessionName",
                 "sessionEmail", "avatar", "carForm", "serviceForm", "carTable", "carSelect",
@@ -2634,6 +2770,10 @@
         function wireEvents() {
             el.loginForm.addEventListener("submit", login);
             el.demoLogin.addEventListener("click", demoLogin);
+            el.authLoginTab.addEventListener("click", () => setAuthMode("login"));
+            el.authRegisterTab.addEventListener("click", () => setAuthMode("register"));
+            el.backToLogin.addEventListener("click", () => setAuthMode("login"));
+            el.registerButton.addEventListener("click", registerUser);
             el.passwordToggle.addEventListener("click", togglePassword);
             document.querySelectorAll(".role-option").forEach(button => {
                 button.addEventListener("click", () => selectLoginRole(button.dataset.role));
@@ -2713,6 +2853,7 @@
 
         function initSession() {
             selectLoginRole(state.userRole || "customer");
+            setAuthMode("login");
             if (getSession()) {
                 openApp();
             } else {
@@ -2721,8 +2862,23 @@
             }
         }
 
-        function login(event) {
+        function setAuthMode(mode = "login") {
+            const isRegister = mode === "register";
+            el.loginFields.classList.toggle("active", !isRegister);
+            el.registerFields.classList.toggle("active", isRegister);
+            el.authLoginTab.classList.toggle("active", !isRegister);
+            el.authRegisterTab.classList.toggle("active", isRegister);
+            el.authTitle.textContent = isRegister ? "Create account" : "Welcome back";
+            el.authSubtitle.textContent = isRegister
+                ? `Create a ${state.userRole} account and save it in MySQL.`
+                : "Select customer or employee, then login using saved MySQL account details.";
+            el.customerAddressField.classList.toggle("hidden", state.userRole === "employee");
+            icons();
+        }
+
+        async function login(event) {
             event.preventDefault();
+
             const email = el.loginEmail.value.trim();
             const password = el.loginPassword.value.trim();
 
@@ -2731,17 +2887,97 @@
                 return;
             }
 
-            saveSession(email, state.userRole);
-            openApp();
+            const loginUrl = state.userRole === "employee"
+                ? `${API}/employees/login`
+                : `${API}/customers/login`;
+
+            try {
+                const response = await fetch(loginUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    toast("Invalid email or password.");
+                    return;
+                }
+
+                const user = await response.json();
+                saveSession(user, state.userRole);
+                openApp();
+                toast(`${titleCase(state.userRole)} login successful.`);
+            } catch (error) {
+                toast("Backend is not running. Start Spring Boot first.");
+            }
         }
 
         function demoLogin() {
-            el.loginEmail.value = state.userRole === "employee" ? "employee@garage.com" : "customer@example.com";
-            el.loginPassword.value = "service123";
-            saveSession(el.loginEmail.value, state.userRole);
-            openApp();
-            if (state.userRole === "customer") {
-                navigate("addCarPage");
+            if (state.userRole === "employee") {
+                el.loginEmail.value = "kasun@gmail.com";
+                el.loginPassword.value = "1234";
+            } else {
+                el.loginEmail.value = "bhanuka@gmail.com";
+                el.loginPassword.value = "1234";
+            }
+            toast("Demo details added. Click Login to continue.");
+        }
+
+        async function registerUser() {
+            const fullName = el.registerName.value.trim();
+            const email = el.registerEmail.value.trim();
+            const phoneNumber = el.registerPhone.value.trim();
+            const password = el.registerPassword.value.trim();
+
+            if (!fullName || !email.includes("@") || !phoneNumber || password.length < 4) {
+                toast("Enter name, valid email, phone number, and password with at least 4 characters.");
+                return;
+            }
+
+            const isEmployee = state.userRole === "employee";
+            const registerUrl = isEmployee
+                ? `${API}/employees/register`
+                : `${API}/customers/register`;
+
+            const payload = isEmployee ? {
+                fullName,
+                email,
+                phoneNumber,
+                password,
+                role: el.registerRole.value.trim() || "Mechanic",
+                availability: el.registerAvailability.value.trim() || "Available",
+                salary: Number(el.registerSalary.value || 0),
+                experienceYears: Number(el.registerExperienceYears.value || 0),
+                serviceType: el.registerServiceType.value.trim() || "General Service",
+                payableAmount: Number(el.registerPayableAmount.value || 0),
+                carBrandSpecialty: el.registerCarBrandSpecialty.value.trim() || "General",
+                shift: el.registerShift.value.trim() || "Morning"
+            } : {
+                fullName,
+                email,
+                phoneNumber,
+                password,
+                address: el.registerAddress.value.trim()
+            };
+
+            try {
+                const response = await fetch(registerUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    toast("Account already exists or details are invalid.");
+                    return;
+                }
+
+                const user = await response.json();
+                saveSession(user, state.userRole);
+                openApp();
+                toast(`${titleCase(state.userRole)} account created and logged in.`);
+            } catch (error) {
+                toast("Backend is not running. Start Spring Boot first.");
             }
         }
 
@@ -2762,13 +2998,18 @@
                 title.textContent = "Vehicle service made clear for customers and workshop teams.";
                 text.textContent = "Add cars with images, request service, review history, rate quality, and connect with available workshop staff.";
             }
+            if (el.registerFields) setAuthMode(el.registerFields.classList.contains("active") ? "register" : "login");
             icons();
         }
 
-        function saveSession(email, role = "customer") {
+        function saveSession(user, role = "customer") {
+            const email = user.email || "user@example.com";
             localStorage.setItem(STORAGE.session, JSON.stringify({
+                id: user.id || "",
                 email,
-                name: email.split("@")[0].replace(/[._-]/g, " "),
+                name: user.fullName || email.split("@")[0].replace(/[._-]/g, " "),
+                phoneNumber: user.phoneNumber || "",
+                address: user.address || "",
                 role,
                 signedInAt: new Date().toISOString()
             }));
@@ -3920,6 +4161,73 @@
         function icons() {
             if (window.lucide) lucide.createIcons();
         }
+    </script>
+    <script>
+        const API = "http://localhost:8080/api";
+
+        const loginButton = document.getElementById("loginButton");
+        const loginEmail = document.getElementById("loginEmail");
+        const loginPassword = document.getElementById("loginPassword");
+
+        let selectedRole = "customer";
+
+        document.querySelectorAll("[data-role]").forEach(button => {
+            button.addEventListener("click", () => {
+                selectedRole = button.dataset.role;
+            });
+        });
+
+        loginButton.addEventListener("click", async () => {
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+
+            if (!email || !password) {
+                alert("Please enter email and password.");
+                return;
+            }
+
+            const loginUrl = selectedRole === "employee"
+                ? `${API}/employees/login`
+                : `${API}/customers/login`;
+
+            try {
+                const response = await fetch(loginUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                if (!response.ok) {
+                    alert("Invalid email or password.");
+                    return;
+                }
+
+                const user = await response.json();
+
+                localStorage.setItem("loggedUser", JSON.stringify({
+                    id: user.id,
+                    name: user.fullName,
+                    email: user.email,
+                    role: selectedRole
+                }));
+
+                alert(`${selectedRole} login successful`);
+
+                if (selectedRole === "employee") {
+                    window.location.href = "index.html";
+                } else {
+                    window.location.href = "customer.html";
+                }
+
+            } catch (error) {
+                alert("Backend is not running. Start Spring Boot first.");
+            }
+        });
     </script>
 </body>
 </html>
