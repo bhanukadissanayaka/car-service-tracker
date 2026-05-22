@@ -1,6 +1,7 @@
 package com.cartracker.carservicetracker.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,11 +12,13 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonAlias("customerName")
     private String fullName;
 
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonAlias("contactNumber")
     private String phoneNumber;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -42,11 +45,19 @@ public class Customer {
         return fullName;
     }
 
+    public String getCustomerName() {
+        return fullName;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getContactNumber() {
         return phoneNumber;
     }
 
@@ -66,12 +77,20 @@ public class Customer {
         this.fullName = fullName;
     }
 
+    public void setCustomerName(String customerName) {
+        this.fullName = customerName;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.phoneNumber = contactNumber;
     }
 
     public void setPassword(String password) {

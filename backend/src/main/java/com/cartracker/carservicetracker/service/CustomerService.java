@@ -23,6 +23,10 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    public Customer addCustomer(Customer customer) {
+        return registerCustomer(customer);
+    }
+
     public Customer loginCustomer(String email, String password) {
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -45,6 +49,12 @@ public class CustomerService {
 
     public Customer updateCustomer(Long id, Customer updatedCustomer) {
         Customer existingCustomer = getCustomerById(id);
+
+        if (updatedCustomer.getEmail() != null
+                && !updatedCustomer.getEmail().equalsIgnoreCase(existingCustomer.getEmail())
+                && customerRepository.existsByEmailAndIdNot(updatedCustomer.getEmail(), id)) {
+            throw new RuntimeException("Email already registered");
+        }
 
         existingCustomer.setFullName(updatedCustomer.getFullName());
         existingCustomer.setEmail(updatedCustomer.getEmail());
