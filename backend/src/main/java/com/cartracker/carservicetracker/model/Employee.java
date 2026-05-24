@@ -1,6 +1,5 @@
 package com.cartracker.carservicetracker.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,19 +12,15 @@ public class Employee {
 
     private String fullName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     private String phoneNumber;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
     private String role;
     private String availability;
     private Double salary;
     private Integer experienceYears;
-
     private String serviceType;
     private Double payableAmount;
     private String carBrandSpecialty;

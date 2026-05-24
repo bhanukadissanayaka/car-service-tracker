@@ -1,6 +1,7 @@
 package com.cartracker.carservicetracker.controller;
 
 import com.cartracker.carservicetracker.model.Employee;
+import com.cartracker.carservicetracker.model.LoginRequest;
 import com.cartracker.carservicetracker.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,29 +50,5 @@ public class EmployeeController {
     public String deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return "Employee deleted successfully";
-    }
-
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        public LoginRequest() {
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
     }
 }
